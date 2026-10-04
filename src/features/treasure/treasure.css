@@ -1,0 +1,23 @@
+.treasures { columns: 3 260px; column-gap: 18px; }
+.treasure {
+  break-inside: avoid;
+  margin-bottom: 18px;
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  animation: wish-in 450ms var(--ease) both;
+}
+.treasure img { width: 100%; display: block; }
+.treasure p { padding: 18px 20px 4px; font-size: 1rem; line-height: 1.55; white-space: pre-wrap; }
+.treasure-foot { display: flex; align-items: center; justify-content: space-between; padding: 6px 10px 8px 20px; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-faint); font-weight: 600; }
+.t-phrase { background: color-mix(in srgb, var(--accent) 8%, var(--surface)); }
+.t-phrase p { font-family: var(--font-display); font-style: italic; font-weight: 300; font-size: 1.3rem; line-height: 1.45; text-align: center; padding: 28px 24px 10px; }
+.t-victoire { background: color-mix(in srgb, var(--gold) 12%, var(--surface)); }
+.t-victoire p::before { content: '★ '; color: var(--gold); }
+.t-souvenir p { font-family: var(--font-hand); font-size: 1.5rem; line-height: 1.2; }
+.t-bienfait { background: color-mix(in srgb, var(--sage) 12%, var(--surface)); }
+.treasure-drawn { text-align: center; padding: 10px 0 6px; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.treasure-drawn .hand { font-size: 1.6rem; }
+.treasure-drawn .treasure { width: 100%; text-align: left; margin: 0; }

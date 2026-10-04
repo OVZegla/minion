@@ -1,0 +1,52 @@
+.thought-input { padding: 16px 18px; }
+.thought-input textarea {
+  width: 100%;
+  border: none;
+  background: none;
+  resize: none;
+  min-height: 70px;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 300;
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+.thought-input textarea:focus { outline: none; }
+
+.thoughts { columns: 4 230px; column-gap: 16px; }
+.thought {
+  break-inside: avoid;
+  margin-bottom: 16px;
+  border-radius: 6px 18px 18px 18px;
+  padding: 16px 16px 8px;
+  position: relative;
+  color: #3f3730;
+  box-shadow: 0 6px 16px -10px rgba(80, 60, 40, 0.35);
+  animation: wish-in 450ms var(--ease) both;
+  transition: transform var(--t-med) var(--ease), box-shadow var(--t-med);
+}
+.thought:hover { transform: translateY(-2px); }
+.thought.sel { box-shadow: 0 0 0 2px var(--accent); }
+.thought-text { font-family: var(--font-hand); font-size: 1.45rem; line-height: 1.2; white-space: pre-wrap; word-break: break-word; padding-right: 18px; }
+.thought-foot { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 0.74rem; }
+.thought-foot .btn.ghost:hover { background: rgba(255, 255, 255, 0.5); }
+.thought-group { background: rgba(255, 255, 255, 0.6); border-radius: 999px; padding: 2px 8px; font-weight: 500; }
+.thought-select {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(63, 55, 48, 0.3);
+  background: rgba(255, 255, 255, 0.5);
+  display: grid;
+  place-items: center;
+  color: #fff;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity var(--t-fast);
+}
+.thought:hover .thought-select, .thought-select.on { opacity: 1; }
+.thought-select.on { background: var(--accent); border-color: var(--accent); }
+@media (hover: none) { .thought-select { opacity: 1; } }

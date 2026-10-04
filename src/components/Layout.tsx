@@ -5,6 +5,8 @@ import { db } from '../db/db'
 import { useSettings } from '../db/settings'
 import { Icon } from './Icon'
 import { Mascot } from './Mascot'
+import { useUI } from './ui'
+import { useReminders } from '../features/calendar/reminders'
 import { deName } from '../lib/phrases'
 import { QuickCapture } from './QuickCapture'
 import { SearchPalette } from './SearchPalette'
@@ -25,6 +27,7 @@ const NAV = [
 
 export function Layout() {
   const settings = useSettings()
+  const { toast } = useUI()
   const [capture, setCapture] = useState(false)
   const [search, setSearch] = useState(false)
   const [mobileNav, setMobileNav] = useState(false)
@@ -33,6 +36,7 @@ export function Layout() {
   const inboxCount = useLiveQuery(() => db.notes.filter((n) => n.inbox && !n.trashedAt).count(), []) ?? 0
 
   useEffect(() => setMobileNav(false), [loc.pathname])
+  useReminders(toast)
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {

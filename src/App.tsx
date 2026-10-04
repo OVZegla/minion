@@ -11,6 +11,16 @@ import { InboxPage } from './features/notes/InboxPage'
 import { LibraryPage } from './features/notes/LibraryPage'
 import { NoteEditorPage } from './features/notes/NoteEditorPage'
 import { ParcheminPage } from './features/wishes/ParcheminPage'
+import { ProjectsPage } from './features/projects/ProjectsPage'
+import { ProjectPage } from './features/projects/ProjectPage'
+import { MoodboardsPage } from './features/moodboards/MoodboardsPage'
+import { MoodboardEditorPage } from './features/moodboards/MoodboardEditor'
+import { CalendarPage } from './features/calendar/CalendarPage'
+import { JournalPage } from './features/journal/JournalPage'
+import { JournalEntryPage } from './features/journal/JournalEntryPage'
+import { ThoughtsPage } from './features/thoughts/ThoughtsPage'
+import { TreasurePage } from './features/treasure/TreasurePage'
+import { SettingsPage } from './features/settings/SettingsPage'
 
 const router = createHashRouter([
   {
@@ -23,6 +33,17 @@ const router = createHashRouter([
       { path: 'notes', element: <LibraryPage /> },
       { path: 'notes/:id', element: <NoteEditorPage /> },
       { path: 'parchemin', element: <ParcheminPage /> },
+      { path: 'projets', element: <ProjectsPage /> },
+      { path: 'projets/:id', element: <ProjectPage /> },
+      { path: 'moodboards', element: <MoodboardsPage /> },
+      { path: 'moodboards/:id', element: <MoodboardEditorPage /> },
+      { path: 'calendrier', element: <CalendarPage /> },
+      { path: 'journal', element: <JournalPage /> },
+      { path: 'journal/:id', element: <JournalEntryPage /> },
+      { path: 'pensees', element: <ThoughtsPage /> },
+      { path: 'tresor', element: <TreasurePage /> },
+      { path: 'reglages', element: <SettingsPage /> },
+      { path: '*', element: <ErrorPage /> },
     ],
   },
 ])

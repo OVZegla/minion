@@ -1,0 +1,5 @@
+.set-section { margin-bottom: 18px; }
+.accent-pick { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 6px 14px 6px 6px; cursor: pointer; font-size: 0.88rem; }
+.accent-pick span { width: 22px; height: 22px; border-radius: 50%; }
+.accent-pick.on { border-color: var(--ink); box-shadow: var(--shadow-sm); }
+.set-list { margin: 10px 0 0; padding-left: 1.2em; color: var(--ink-soft); font-size: 0.9rem; line-height: 1.8; }
