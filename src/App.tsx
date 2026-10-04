@@ -26,6 +26,8 @@ import { SongEditorPage } from './features/synth/SongEditor'
 import { LearnPage } from './features/learn/LearnPage'
 import { DeckPage } from './features/learn/DeckPage'
 import { PenHomePage, PenLevelPage } from './features/pen/PenGamePage'
+import { StudioHome } from './features/studio/StudioHome'
+import { StudioPage } from './features/studio/Studio'
 
 const router = createHashRouter([
   {
@@ -51,6 +53,8 @@ const router = createHashRouter([
       { path: 'synthe/:id', element: <SongEditorPage /> },
       { path: 'apprendre', element: <LearnPage /> },
       { path: 'plume', element: <PenHomePage /> },
+      { path: 'studio', element: <StudioHome /> },
+      { path: 'studio/:id', element: <StudioPage /> },
       { path: 'plume/:levelId', element: <PenLevelPage /> },
       { path: 'apprendre/:id', element: <DeckPage /> },
       { path: 'reglages', element: <SettingsPage /> },

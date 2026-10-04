@@ -1,6 +1,6 @@
 import { db } from './db'
 
-const TABLES = ['notes', 'folders', 'wishes', 'projects', 'tasks', 'events', 'journal', 'thoughts', 'treasures', 'moodboards', 'palettes', 'links', 'settings', 'songs', 'decks', 'kv'] as const
+const TABLES = ['notes', 'folders', 'wishes', 'projects', 'tasks', 'events', 'journal', 'thoughts', 'treasures', 'moodboards', 'palettes', 'links', 'settings', 'songs', 'decks', 'kv', 'graphics'] as const
 
 function blobToDataUrl(b: Blob): Promise<string> {
   return new Promise((res, rej) => {
@@ -11,10 +11,33 @@ function blobToDataUrl(b: Blob): Promise<string> {
   })
 }
 
+/** Remplace récursivement les fichiers (Blob) par des données texte, et inversement. */
+async function packBlobs(v: unknown): Promise<unknown> {
+  if (v instanceof Blob) return { __blob: await blobToDataUrl(v) }
+  if (Array.isArray(v)) return Promise.all(v.map(packBlobs))
+  if (v && typeof v === 'object') {
+    const out: Record<string, unknown> = {}
+    for (const [k, x] of Object.entries(v)) out[k] = await packBlobs(x)
+    return out
+  }
+  return v
+}
+async function unpackBlobs(v: unknown): Promise<unknown> {
+  if (Array.isArray(v)) return Promise.all(v.map(unpackBlobs))
+  if (v && typeof v === 'object') {
+    const o = v as Record<string, unknown>
+    if (typeof o.__blob === 'string') return (await fetch(o.__blob)).blob()
+    const out: Record<string, unknown> = {}
+    for (const [k, x] of Object.entries(o)) out[k] = await unpackBlobs(x)
+    return out
+  }
+  return v
+}
+
 /** Exporte tout (images comprises) dans un seul fichier JSON. */
 export async function exportAll(): Promise<Blob> {
   const data: Record<string, unknown> = {}
-  for (const t of TABLES) data[t] = await db.table(t).toArray()
+  for (const t of TABLES) data[t] = await packBlobs(await db.table(t).toArray())
   const assets = await db.assets.toArray()
   data.assets = await Promise.all(assets.map(async (a) => ({ ...a, blob: await blobToDataUrl(a.blob) })))
   return new Blob([JSON.stringify({ app: 'minion', version: 1, exportedAt: new Date().toISOString(), data })], { type: 'application/json' })
@@ -40,6 +63,7 @@ export async function restoreBackup(file: File) {
   const json = JSON.parse(await file.text())
   if (json?.app !== 'minion' || !json.data) throw new Error('Ce fichier n’est pas une sauvegarde Minion.')
   const data = json.data as Record<string, unknown[]>
+  for (const t of TABLES) if (Array.isArray(data[t])) data[t] = (await unpackBlobs(data[t])) as unknown[]
   const assets = await Promise.all(
     ((data.assets ?? []) as { blob: string }[]).map(async (a) => ({ ...a, blob: await (await fetch(a.blob)).blob() })),
   )

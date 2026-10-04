@@ -26,6 +26,7 @@ const NAV = [
   { to: '/synthe', icon: 'music', label: 'Atelier synthé', group: 'Créer et apprendre' },
   { to: '/apprendre', icon: 'target', label: 'Apprendre' },
   { to: '/plume', icon: 'pen', label: 'Atelier plume' },
+  { to: '/studio', icon: 'palette', label: 'Studio graphique' },
 ]
 
 /** Espaces de travail plein écran (sans le menu de Minion). */

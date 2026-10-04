@@ -17,6 +17,7 @@ import type {
   Song,
   Deck,
 } from './types'
+import type { GraphicDoc } from '../features/studio/types'
 
 class MinionDB extends Dexie {
   notes!: Table<Note, string>
@@ -36,6 +37,7 @@ class MinionDB extends Dexie {
   songs!: Table<Song, string>
   decks!: Table<Deck, string>
   kv!: Table<{ id: string; value: unknown }, string>
+  graphics!: Table<GraphicDoc, string>
 
   constructor() {
     super('minion')
@@ -62,6 +64,8 @@ class MinionDB extends Dexie {
     })
     // v3 : préférences et progressions diverses (atelier plume…)
     this.version(3).stores({ kv: 'id' })
+    // v4 : studio graphique
+    this.version(4).stores({ graphics: 'id, updatedAt, openedAt' })
   }
 }
 

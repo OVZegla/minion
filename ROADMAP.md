@@ -36,8 +36,15 @@ Une case n'est cochée que si la fonction est utilisable **et** sauvegardée. Vo
 - [ ] Reconnaissance d’un fichier audio (évolution séparée, jamais parfaite)
 
 ## Étape 3 — Création graphique
-- [ ] Atelier plume (jeu inspiré du Bézier Game, logique et raccourcis de la plume Photoshop)
-- [ ] Studio graphique (disposition et raccourcis Photoshop, fonctions affichées honnêtement)
+- [x] Atelier plume : 18 niveaux en 7 chapitres (segments → silhouette de la mascotte), outil plume fidèle à Photoshop (P, A, Ctrl, Alt, Maj, fermer, ajouter/supprimer des points, Espace pour déplacer le point), démonstration animée, indices, score et retour par segment, étoiles enregistrées
+- [x] Atelier libre : modèle à décalquer, plusieurs tracés, export SVG, ouverture dans le studio
+- [x] Studio graphique : disposition Photoshop (menus, barre d’options, outils avec groupes, panneaux Couleur/Nuancier/Propriétés/Calques/Historique), raccourcis Photoshop, plein écran (F) pour Ctrl+T / Ctrl+N
+- [x] Calques pixel, texte, forme, groupes ; 16 modes de fusion ; opacité ; masques de fusion ; verrouillage ; réordonner ; fusionner ; aplatir
+- [x] Sélections (rectangle, ellipse, lasso, polygonal, baguette magique, ajouter/soustraire/intersection, contour progressif, intervertir)
+- [x] Pinceau, crayon, gomme, pot de peinture, dégradé, pipette, texte, formes, plume, déplacement, transformation, recadrage
+- [x] Réglages (Niveaux, Courbes, Teinte/Saturation, Luminosité/Contraste, Seuil, Désaturation, Négatif) et filtres (Flou gaussien, Netteté, Bruit)
+- [x] Historique, projet rééditable enregistré automatiquement, export PNG/JPEG, envoi vers un moodboard ou un projet, nuancier partagé
+- [ ] Non prévu pour l’instant : PSD, calques de réglage, styles de calque, retouche (tampon, correcteur), IA générative, pression du stylet
 
 ## Étape 4 — Aménagement
 - [ ] Plans 2D (grille, accrochage, cotations, murs, portes, fenêtres, meubles)

@@ -24,6 +24,14 @@ interface Props {
   stroke?: string
   fill?: string
   showRubberBand?: boolean
+  /** fond blanc (atelier) ou transparent (studio) */
+  background?: string | null
+  /** Ctrl+Z géré ici (atelier) ou par l'historique de l'application hôte (studio) */
+  undoKeys?: boolean
+  /** P / A changent d'outil ici (atelier) ou dans l'application hôte */
+  toolKeys?: boolean
+  className?: string
+  style?: React.CSSProperties
 }
 
 const HIT = 9
@@ -34,7 +42,7 @@ const HIT = 9
  * Ctrl = sélection directe temporaire · clic sur le 1er point = fermer · Ctrl+Z = annuler
  * Échap / Entrée = terminer · clic sur le dernier point = reprendre.
  */
-export function PenCanvas({ width, height, value, onChange, tool, setTool, under, over, onCommit, stroke = '#2f80ed', fill = 'none', showRubberBand = true }: Props) {
+export function PenCanvas({ width, height, value, onChange, tool, setTool, under, over, onCommit, stroke = '#2f80ed', fill = 'none', showRubberBand = true, background = '#fff', undoKeys = true, toolKeys = true, className = 'pen-svg', style }: Props) {
   const svg = useRef<SVGSVGElement>(null)
   const drag = useRef<Drag | null>(null)
   const [drawing, setDrawing] = useState(false) // un tracé ouvert est en cours
@@ -79,6 +87,7 @@ export function PenCanvas({ width, height, value, onChange, tool, setTool, under
         if (d?.kind === 'new' && !d.spaceFrom && hover) d.spaceFrom = hover
       }
       const ctrl = e.ctrlKey || e.metaKey
+      if (ctrl && !undoKeys) return
       if (ctrl && e.key.toLowerCase() === 'z' && !e.shiftKey) {
         e.preventDefault()
         const prev = past.current.pop()
@@ -106,8 +115,8 @@ export function PenCanvas({ width, height, value, onChange, tool, setTool, under
       if (e.key === 'Escape' || e.key === 'Enter') {
         setDrawing(false)
         setSel(null)
-      } else if (e.key.toLowerCase() === 'p' && !e.altKey) setTool('pen')
-      else if (e.key.toLowerCase() === 'a' && !e.altKey) setTool('direct')
+      } else if (toolKeys && e.key.toLowerCase() === 'p' && !e.altKey) setTool('pen')
+      else if (toolKeys && e.key.toLowerCase() === 'a' && !e.altKey) setTool('direct')
       else if ((e.key === 'Delete' || e.key === 'Backspace') && sel != null && effTool === 'direct') {
         e.preventDefault()
         removeAnchor(sel)
@@ -374,15 +383,15 @@ export function PenCanvas({ width, height, value, onChange, tool, setTool, under
   return (
     <svg
       ref={svg}
-      className="pen-svg"
+      className={className}
       viewBox={`0 0 ${width} ${height}`}
-      style={{ cursor }}
+      style={{ cursor, ...style }}
       onPointerDown={onDown}
       onPointerMove={onMove}
       onPointerUp={onUp}
       onPointerLeave={() => setHover(null)}
     >
-      <rect width={width} height={height} fill="#fff" />
+      {background ? <rect width={width} height={height} fill={background} /> : <rect width={width} height={height} fill="transparent" />}
       {under}
       {/* tracé */}
       <path d={toSvg(value)} fill={value.closed ? fill : 'none'} stroke={stroke} strokeWidth={1.6} strokeLinejoin="round" />

@@ -372,6 +372,17 @@ function PenLevel({ level }: { level: Level }) {
                 + Nouveau tracé
               </button>
               <button className="ps-btn" onClick={exportSvg}>Exporter en SVG</button>
+              <button
+                className="ps-btn primary"
+                onClick={async () => {
+                  const all = [...done, path].filter((p) => p.anchors.length > 1)
+                  if (!all.length) return toast('Dessine d’abord un tracé.')
+                  const { createDocFromPaths } = await import('../studio/Studio')
+                  navigate(`/studio/${await createDocFromPaths('Tracés de l’atelier plume', W, H, all)}`)
+                }}
+              >
+                Ouvrir dans le studio →
+              </button>
               <button className="ps-btn ghost" onClick={() => { setDone([]); reset() }}>Tout effacer</button>
             </>
           )}
