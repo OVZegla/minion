@@ -4,6 +4,7 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../db/db'
 import { useSettings } from '../db/settings'
 import { Icon } from './Icon'
+import { Mascot } from './Mascot'
 import { deName } from '../lib/phrases'
 import { QuickCapture } from './QuickCapture'
 import { SearchPalette } from './SearchPalette'
@@ -52,10 +53,7 @@ export function Layout() {
     <div className="shell">
       <aside className={`sidebar no-print ${mobileNav ? 'open' : ''}`}>
         <div className="brand" onClick={() => navigate('/')}>
-          <svg viewBox="0 0 64 64" width="30" height="30" aria-hidden>
-            <path d="M14 46c4-16 9-25 16-25s7 11 11 11 5-7 5-7" fill="none" stroke="var(--accent)" strokeWidth="4.5" strokeLinecap="round" />
-            <circle cx="47" cy="17" r="4" fill="var(--accent)" />
-          </svg>
+          <Mascot size={34} className="brand-mascot" />
           <div>
             <div className="brand-name">Minion</div>
             <div className="brand-sub">l’univers {deName(settings.name)}</div>

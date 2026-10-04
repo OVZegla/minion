@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { greeting, randomPhrase } from '../lib/phrases'
+import { Mascot } from './Mascot'
 import './splash.css'
 
 interface Props {
@@ -50,7 +51,8 @@ export function Splash({ name, extraPhrases = [], onDone }: Props) {
 
       <div className="splash-content">
         <div className="splash-emblem" aria-hidden>
-          {evening ? <MoonEmblem /> : <SunEmblem />}
+          <Mascot size={92} className="splash-mascot" />
+          <span className="splash-sky">{evening ? <MoonEmblem /> : <SunEmblem />}</span>
         </div>
 
         <h1 className="splash-title">
@@ -87,7 +89,7 @@ export function Splash({ name, extraPhrases = [], onDone }: Props) {
 
 function SunEmblem() {
   return (
-    <svg viewBox="0 0 80 80" width="64" height="64">
+    <svg viewBox="0 0 80 80" width="44" height="44">
       <circle className="draw" cx="40" cy="40" r="13" />
       {Array.from({ length: 8 }).map((_, i) => {
         const a = (i * Math.PI) / 4
@@ -103,7 +105,7 @@ function SunEmblem() {
 
 function MoonEmblem() {
   return (
-    <svg viewBox="0 0 80 80" width="64" height="64">
+    <svg viewBox="0 0 80 80" width="44" height="44">
       <path className="draw" d="M50 18 A 24 24 0 1 0 62 52 A 19 19 0 1 1 50 18 Z" />
       <path className="draw star" d="M60 20 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2 z" />
     </svg>

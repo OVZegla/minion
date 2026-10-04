@@ -65,6 +65,9 @@ export interface Project extends Base {
   endDate?: string | null
   order: number
   openedAt?: number
+  resources?: { id: string; label: string; url: string }[]
+  documents?: string[] // ids d'Asset (pièces jointes)
+  results?: string[] // ids d'Asset (créations, photos du résultat)
 }
 
 export interface Task extends Base {

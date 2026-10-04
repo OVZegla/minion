@@ -1,0 +1,47 @@
+.tasks { display: flex; flex-direction: column; gap: 2px; }
+.task {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 6px;
+  border-radius: var(--r-sm);
+  min-height: 38px;
+}
+.task:hover { background: var(--surface-2); }
+.task-check {
+  width: 18px;
+  height: 18px;
+  border-radius: 6px;
+  border: 1.5px solid var(--line-strong);
+  background: var(--surface);
+  display: grid;
+  place-items: center;
+  color: #fff;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background var(--t-fast), border-color var(--t-fast), transform var(--t-fast);
+}
+.task-check:hover { border-color: var(--accent); }
+.task-check.on { background: var(--accent); border-color: var(--accent); animation: pop 300ms var(--ease); }
+@keyframes pop { 50% { transform: scale(1.2); } }
+.task-title { flex: 1; min-width: 0; font-size: 0.93rem; }
+.task.done .task-title { color: var(--ink-faint); text-decoration: line-through; }
+.task-edit { flex: 1; border: 1px solid var(--accent); border-radius: 6px; padding: 3px 6px; background: var(--surface); }
+.task-date { font-size: 0.76rem; color: var(--ink-faint); white-space: nowrap; }
+.task-date.past { color: var(--terracotta); }
+.task-actions { display: flex; gap: 2px; opacity: 0; transition: opacity var(--t-fast); }
+.task:hover .task-actions, .task:focus-within .task-actions { opacity: 1; }
+.task-add {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  color: var(--ink-faint);
+  border-radius: var(--r-sm);
+}
+.task-add input:not(.task-date-input) { flex: 1; border: none; background: none; font-size: 0.93rem; color: var(--ink); padding: 4px 0; }
+.task-add input:focus { outline: none; }
+.task-date-input { border: 1px solid var(--line); border-radius: 8px; background: var(--surface); font-size: 0.78rem; padding: 3px 6px; color: var(--ink-soft); }
+.task-done-toggle { display: flex; align-items: center; gap: 6px; border: none; background: none; color: var(--ink-faint); font-size: 0.8rem; padding: 8px 6px 4px; cursor: pointer; }
+
+@media (hover: none) { .task-actions { opacity: 1; } }

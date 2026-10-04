@@ -166,3 +166,23 @@
   .splash-letter, .splash-phrase, .splash-glow, .splash-hint { animation: none !important; opacity: 1; transform: none; filter: none; }
   .splash-emblem .draw, .splash-underline path { animation: none !important; stroke-dashoffset: 0; }
 }
+
+/* Mascotte : apparition, flottement, clignement */
+.splash-mascot {
+  opacity: 0;
+  transform: translateY(24px) scale(0.6);
+  animation: mascot-in 900ms cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s forwards, mascot-bob 3.2s ease-in-out 1s infinite;
+  filter: drop-shadow(0 10px 18px rgba(201, 150, 20, 0.22));
+}
+@keyframes mascot-in { to { opacity: 1; transform: none; } }
+@keyframes mascot-bob {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  50% { transform: translateY(-6px) rotate(-2deg); }
+}
+.splash-mascot .m-eyes { transform-box: fill-box; transform-origin: center; animation: blink 4s ease-in-out 1.6s infinite; }
+@keyframes blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.1); } }
+.splash-mascot .m-sprout { transform-box: fill-box; transform-origin: bottom center; animation: sprout 3.2s ease-in-out 1s infinite; }
+@keyframes sprout { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(6deg); } }
+.splash.evening .splash-mascot { filter: drop-shadow(0 0 24px rgba(255, 220, 140, 0.25)); }
+.splash-emblem { position: relative; width: max-content; margin: 0 auto 18px; }
+.splash-sky { position: absolute; top: -10px; right: -46px; }
