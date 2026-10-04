@@ -41,7 +41,7 @@ const router = createHashRouter([
       { path: 'journal', element: <JournalPage /> },
       { path: 'journal/:id', element: <JournalEntryPage /> },
       { path: 'pensees', element: <ThoughtsPage /> },
-      { path: 'tresor', element: <TreasurePage /> },
+      { path: 'bonheurs', element: <TreasurePage /> },
       { path: 'reglages', element: <SettingsPage /> },
       { path: '*', element: <ErrorPage /> },
     ],
@@ -58,7 +58,7 @@ export function App() {
     ;(async () => {
       const s = await getSettings()
       applyTheme(s)
-      // Ses propres phrases (trésor) rejoignent le tirage de l'ouverture
+      // Ses propres phrases (petits bonheurs) rejoignent le tirage de l'ouverture
       const mine = await db.treasures.where('kind').equals('phrase').toArray()
       setExtra(mine.map((t) => t.text).filter(Boolean))
       setShowSplash(s.splash && !location.search.includes('nosplash'))

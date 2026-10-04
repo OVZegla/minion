@@ -171,7 +171,7 @@ export function SettingsPage() {
           <li>Projets : liste, tableau, tâches, liens, documents, créations</li>
           <li>Moodboards : composition libre, modèles, export PNG et PDF</li>
           <li>Calendrier : jour, semaine, mois, récurrences, rappels (app ouverte), tâches</li>
-          <li>Journal, pensées à plat, mon trésor</li>
+          <li>Journal, pensées à plat, mes petits bonheurs</li>
         </ul>
         <p className="faint" style={{ fontSize: '0.82rem', marginTop: 8 }}>
           En préparation : atelier synthé, apprentissage, atelier plume, studio graphique, pièces et maisons.

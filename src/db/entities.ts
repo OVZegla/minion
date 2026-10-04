@@ -14,10 +14,12 @@ export const ENTITY: Record<
   task: { label: 'Tâche', plural: 'Tâches', icon: 'check', route: () => `/calendrier`, linkable: false },
   journal: { label: 'Page de journal', plural: 'Journal', icon: 'feather', route: (id) => `/journal/${id}`, linkable: true },
   thought: { label: 'Pensée', plural: 'Pensées', icon: 'cloud', route: () => `/pensees`, linkable: false },
-  treasure: { label: 'Trésor', plural: 'Trésor', icon: 'heart', route: () => `/tresor`, linkable: false },
+  song: { label: 'Morceau', plural: 'Morceaux', icon: 'music', route: (id) => `/synthe/${id}`, linkable: true },
+  deck: { label: 'Série de révision', plural: 'Apprendre', icon: 'target', route: (id) => `/apprendre/${id}`, linkable: true },
+  treasure: { label: 'Petit bonheur', plural: 'Petits bonheurs', icon: 'heart', route: () => `/bonheurs`, linkable: false },
 }
 
-export const LINKABLE: EntityType[] = ['note', 'wish', 'project', 'moodboard', 'event', 'journal']
+export const LINKABLE: EntityType[] = ['note', 'wish', 'project', 'moodboard', 'event', 'journal', 'song', 'deck']
 
 export interface EntitySummary {
   type: EntityType
@@ -61,6 +63,14 @@ export async function summarize(type: EntityType, id: string): Promise<EntitySum
       const t = await db.thoughts.get(id)
       return t ? { type, id, title: t.text.slice(0, 60) } : null
     }
+    case 'song': {
+      const s = await db.songs.get(id)
+      return s ? { type, id, title: s.title || 'Morceau', sub: `${s.bpm} BPM · ${s.timeSig.join('/')}`, updatedAt: s.updatedAt } : null
+    }
+    case 'deck': {
+      const d = await db.decks.get(id)
+      return d ? { type, id, title: d.title || 'Révision', sub: `${d.cards.length} cartes`, updatedAt: d.updatedAt } : null
+    }
     case 'treasure': {
       const t = await db.treasures.get(id)
       return t ? { type, id, title: t.text.slice(0, 60) } : null
@@ -70,13 +80,15 @@ export async function summarize(type: EntityType, id: string): Promise<EntitySum
 
 /** Liste des contenus reliables, pour le sélecteur de liens et la recherche. */
 export async function listLinkable(): Promise<EntitySummary[]> {
-  const [notes, wishes, projects, boards, events, journal] = await Promise.all([
+  const [notes, wishes, projects, boards, events, journal, songs, decks] = await Promise.all([
     db.notes.toArray(),
     db.wishes.toArray(),
     db.projects.toArray(),
     db.moodboards.toArray(),
     db.events.toArray(),
     db.journal.toArray(),
+    db.songs.toArray(),
+    db.decks.toArray(),
   ])
   return [
     ...notes.filter((n) => !n.trashedAt).map((n) => ({ type: 'note' as const, id: n.id, title: n.title || 'Sans titre', sub: n.text.slice(0, 120), updatedAt: n.updatedAt })),
@@ -85,5 +97,7 @@ export async function listLinkable(): Promise<EntitySummary[]> {
     ...boards.map((m) => ({ type: 'moodboard' as const, id: m.id, title: m.title || 'Moodboard', updatedAt: m.updatedAt })),
     ...events.map((e) => ({ type: 'event' as const, id: e.id, title: e.title || 'Événement', sub: e.start.replace('T', ' à '), updatedAt: e.updatedAt })),
     ...journal.map((j) => ({ type: 'journal' as const, id: j.id, title: j.title || `Journal du ${j.date}`, sub: j.text.slice(0, 120), updatedAt: j.updatedAt })),
+    ...songs.map((s) => ({ type: 'song' as const, id: s.id, title: s.title || 'Morceau', sub: `${s.bpm} BPM`, updatedAt: s.updatedAt })),
+    ...decks.map((d) => ({ type: 'deck' as const, id: d.id, title: d.title || 'Révision', sub: d.topic, updatedAt: d.updatedAt })),
   ]
 }

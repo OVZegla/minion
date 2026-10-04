@@ -8,12 +8,12 @@ import { Modal, useUI } from '../../components/ui'
 import { ThoughtsTabs } from '../thoughts/ThoughtsTabs'
 import './treasure.css'
 
-const KINDS: { id: TreasureKind; label: string; plural: string; placeholder: string }[] = [
-  { id: 'phrase', label: 'Phrase', plural: 'Phrases', placeholder: 'Une phrase qui me fait du bien…' },
-  { id: 'souvenir', label: 'Souvenir', plural: 'Souvenirs', placeholder: 'Un souvenir agréable…' },
-  { id: 'victoire', label: 'Victoire', plural: 'Petites victoires', placeholder: 'Une petite victoire…' },
-  { id: 'image', label: 'Image', plural: 'Images', placeholder: 'Une légende (facultative)' },
-  { id: 'bienfait', label: 'Bienfait', plural: 'Ce qui me fait du bien', placeholder: 'Une chose qui me fait du bien…' },
+const KINDS: { id: TreasureKind; label: string; plural: string; placeholder: string; emoji: string; example: string }[] = [
+  { id: 'phrase', label: 'Une phrase', plural: 'Phrases', emoji: '❝', placeholder: 'Une phrase qui me touche ou me donne de l’élan…', example: 'Une citation, un mot qu’on t’a dit, une phrase à toi' },
+  { id: 'souvenir', label: 'Un souvenir', plural: 'Souvenirs', emoji: '🌸', placeholder: 'Un moment que j’aime me rappeler…', example: 'Un moment doux que tu aimes te rappeler' },
+  { id: 'victoire', label: 'Une petite victoire', plural: 'Petites victoires', emoji: '★', placeholder: 'Ce que j’ai réussi, même petit…', example: '« J’ai joué mon morceau sans m’arrêter »' },
+  { id: 'image', label: 'Une image', plural: 'Images', emoji: '🖼️', placeholder: 'Une légende (facultative)', example: 'Une photo qui te fait sourire' },
+  { id: 'bienfait', label: 'Ce qui me fait du bien', plural: 'Ce qui me fait du bien', emoji: '🍃', placeholder: 'Une chose qui m’apaise ou me rend heureuse…', example: 'Un bain chaud, une chanson, une balade' },
 ]
 
 /** Sa collection personnelle de positif. Rien d'imposé : c'est elle qui choisit. */
@@ -23,6 +23,7 @@ export function TreasurePage() {
   const [kind, setKind] = useState<TreasureKind | 'all'>('all')
   const [adding, setAdding] = useState<TreasureKind | null>(null)
   const [draft, setDraft] = useState({ text: '', imageId: null as string | null })
+  const [help, setHelp] = useState(false)
   const [drawn, setDrawn] = useState<Treasure | null>(null)
 
   const shown = items.filter((t) => kind === 'all' || t.kind === kind)
@@ -41,21 +42,40 @@ export function TreasurePage() {
       </div>
       <div className="page-head">
         <div>
-          <h1>Mon trésor</h1>
-          <p className="sub">Ce que je choisis de garder près de moi. Mes phrases rejoignent aussi celles de l’ouverture.</p>
+          <h1>Mes petits bonheurs</h1>
+          <p className="sub">Un endroit pour garder tout ce qui te fait du bien.</p>
         </div>
         <span className="spacer" />
         {items.length > 0 && (
           <button className="btn" onClick={() => setDrawn(items[Math.floor(Math.random() * items.length)])}>
-            <Icon name="sparkle" size={16} /> Un trésor au hasard
+            <Icon name="sparkle" size={16} /> Un petit bonheur au hasard
           </button>
         )}
       </div>
 
-      <div className="row wrap" style={{ gap: 8, marginBottom: 22 }}>
+      {(items.length === 0 || help) && (
+        <div className="card pad joy-help">
+          <h3>À quoi ça sert ?</h3>
+          <ul>
+            <li><b>Garder</b> ce qui te fait du bien : une phrase, un souvenir, une petite victoire, une image…</li>
+            <li><b>Relire</b> tout ça quand tu en as besoin, ou en <b>tirer un au hasard</b>.</li>
+            <li>Tes <b>phrases</b> apparaissent aussi de temps en temps à l’ouverture de Minion, avec les phrases douces.</li>
+          </ul>
+          <p className="faint" style={{ fontSize: '0.84rem' }}>Rien n’est obligatoire : tu ajoutes ce que tu veux, quand tu veux.</p>
+        </div>
+      )}
+      {items.length > 0 && !help && (
+        <button className="btn ghost sm" style={{ marginBottom: 14 }} onClick={() => setHelp(true)}>
+          <Icon name="sparkle" size={14} /> À quoi ça sert ?
+        </button>
+      )}
+
+      <div className="joy-kinds">
         {KINDS.map((k) => (
-          <button key={k.id} className="btn sm" onClick={() => setAdding(k.id)}>
-            <Icon name="plus" size={14} /> {k.label}
+          <button key={k.id} className="joy-kind" onClick={() => setAdding(k.id)}>
+            <span className="joy-kind-emoji">{k.emoji}</span>
+            <span className="joy-kind-label"><Icon name="plus" size={13} /> {k.label}</span>
+            <span className="joy-kind-ex">{k.example}</span>
           </button>
         ))}
       </div>
@@ -73,8 +93,8 @@ export function TreasurePage() {
 
       {shown.length === 0 ? (
         <div className="empty">
-          <span className="hand">Un coffre tout neuf</span>
-          Garde ici ce qui te réchauffe le cœur.
+          <span className="hand">Rien pour l’instant</span>
+          Choisis ci-dessus ce que tu veux garder en premier.
         </div>
       ) : (
         <div className="treasures">
@@ -83,7 +103,7 @@ export function TreasurePage() {
               key={t.id}
               t={t}
               onDelete={async () => {
-                if (await confirm({ title: 'Retirer ce trésor ?', confirmLabel: 'Retirer', danger: true })) await db.treasures.delete(t.id)
+                if (await confirm({ title: 'Retirer ce petit bonheur ?', confirmLabel: 'Retirer', danger: true })) await db.treasures.delete(t.id)
               }}
             />
           ))}

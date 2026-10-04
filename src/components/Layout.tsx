@@ -75,7 +75,7 @@ export function Layout() {
 
         <nav className="side-nav">
           {NAV.map((n) => (
-            <NavLink key={n.to} to={n.to} end={n.end} className={({ isActive }) => `side-link ${isActive || (n.to === "/pensees" && loc.pathname === "/tresor") ? "active" : ""}`}>
+            <NavLink key={n.to} to={n.to} end={n.end} className={({ isActive }) => `side-link ${isActive || (n.to === "/pensees" && loc.pathname === "/bonheurs") ? "active" : ""}`}>
               <Icon name={n.icon} size={18} />
               <span>{n.label}</span>
               {n.badge === 'inbox' && inboxCount > 0 && <span className="side-badge">{inboxCount}</span>}
