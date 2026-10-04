@@ -247,3 +247,5 @@ button.chip { cursor: pointer; }
 .linked-open:hover { background: var(--accent-wash); }
 .linked-title { color: var(--ink); flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.9rem; }
 .linked-type { font-size: 0.75rem; }
+.seg a { display: inline-block; padding: 6px 14px; border-radius: 999px; font-size: 0.86rem; color: var(--ink-soft); text-decoration: none; transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease); }
+.seg a.on { background: var(--surface); color: var(--ink); box-shadow: var(--shadow-sm); }

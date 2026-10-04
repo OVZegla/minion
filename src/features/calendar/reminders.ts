@@ -44,7 +44,7 @@ export function useReminders(toast: (text: string) => void) {
             const text = `${o.event.title} · ${when}`
             if ('Notification' in window && Notification.permission === 'granted') {
               try {
-                new Notification('Minion', { body: text, icon: '/favicon.svg', tag: key })
+                new Notification('Minion', { body: text, icon: './icons/icon-192.png', tag: key })
               } catch {
                 toast(`⏰ ${text}`)
               }

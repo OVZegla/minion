@@ -5,6 +5,7 @@ import { pickFiles, saveAsset, useAssetUrl } from '../../db/assets'
 import type { Treasure, TreasureKind } from '../../db/types'
 import { Icon } from '../../components/Icon'
 import { Modal, useUI } from '../../components/ui'
+import { ThoughtsTabs } from '../thoughts/ThoughtsTabs'
 import './treasure.css'
 
 const KINDS: { id: TreasureKind; label: string; plural: string; placeholder: string }[] = [
@@ -35,6 +36,9 @@ export function TreasurePage() {
 
   return (
     <div className="page treasure-page">
+      <div style={{ marginBottom: 22 }}>
+        <ThoughtsTabs />
+      </div>
       <div className="page-head">
         <div>
           <h1>Mon trésor</h1>

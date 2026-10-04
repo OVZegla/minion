@@ -5,6 +5,7 @@ import StarterKit from '@tiptap/starter-kit'
 import TaskList from '@tiptap/extension-task-list'
 import TaskItem from '@tiptap/extension-task-item'
 import { TableKit } from '@tiptap/extension-table'
+import { Color, TextStyle } from '@tiptap/extension-text-style'
 import { Placeholder } from '@tiptap/extensions'
 import { AssetImage } from './AssetImage'
 import { pickFiles, saveAsset } from '../../db/assets'
@@ -36,6 +37,8 @@ export function RichEditor({ content, onChange, placeholder = 'Écris ici…', o
       TaskItem.configure({ nested: true }),
       TableKit.configure({ table: { resizable: true } }),
       AssetImage,
+      TextStyle,
+      Color,
       Placeholder.configure({ placeholder }),
     ],
     content: (content as object) ?? '',
@@ -101,6 +104,7 @@ function Toolbar({ editor, onLinkContent, minimal }: { editor: Editor; onLinkCon
       italic: e.isActive('italic'),
       underline: e.isActive('underline'),
       strike: e.isActive('strike'),
+      color: (e.getAttributes('textStyle').color as string | undefined) ?? null,
       bullet: e.isActive('bulletList'),
       ordered: e.isActive('orderedList'),
       task: e.isActive('taskList'),
@@ -145,6 +149,7 @@ function Toolbar({ editor, onLinkContent, minimal }: { editor: Editor; onLinkCon
       <B on={s.strike} label="Barré" onClick={() => c().toggleStrike().run()}>
         <s>B</s>
       </B>
+      <ColorPicker editor={editor} current={s.color} />
       <span className="tb-sep" />
       <B on={s.bullet} label="Liste à puces" onClick={() => c().toggleBulletList().run()}>
         <Icon name="list" size={16} />
@@ -278,5 +283,73 @@ function WebLinkModal({ open, onClose, onSave }: { open: boolean; onClose: () =>
         <input className="input" value={label} onChange={(e) => setLabel(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && save()} />
       </div>
     </Modal>
+  )
+}
+
+/** 10 couleurs de texte douces mais lisibles, sur papier crème comme en mode soir. */
+export const TEXT_COLORS = [
+  { name: 'Rose', value: '#c2636b' },
+  { name: 'Corail', value: '#d0704c' },
+  { name: 'Ambre', value: '#b98a1f' },
+  { name: 'Olive', value: '#7a8a32' },
+  { name: 'Sauge', value: '#4f8a62' },
+  { name: 'Canard', value: '#2a8586' },
+  { name: 'Bleu', value: '#4a6fb5' },
+  { name: 'Lavande', value: '#8566c0' },
+  { name: 'Prune', value: '#9a4a84' },
+  { name: 'Noisette', value: '#8a5a3a' },
+]
+
+function ColorPicker({ editor, current }: { editor: Editor; current: string | null }) {
+  const [open, setOpen] = useState(false)
+  useEffect(() => {
+    if (!open) return
+    const close = () => setOpen(false)
+    window.addEventListener('mousedown', close)
+    return () => window.removeEventListener('mousedown', close)
+  }, [open])
+  return (
+    <span className="tb-color-wrap">
+      <button
+        type="button"
+        className={`tb ${current ? 'on' : ''}`}
+        title="Couleur du texte"
+        aria-label="Couleur du texte"
+        onMouseDown={(e) => e.preventDefault()}
+        onClick={() => setOpen((o) => !o)}
+      >
+        <span className="tb-color-a" style={{ borderColor: current ?? 'var(--ink)' }}>
+          A
+        </span>
+      </button>
+      {open && (
+        <div className="tb-colors" onMouseDown={(e) => e.preventDefault()}>
+          {TEXT_COLORS.map((c) => (
+            <button
+              key={c.value}
+              type="button"
+              className={`tb-color ${current === c.value ? 'on' : ''}`}
+              style={{ background: c.value }}
+              title={c.name}
+              aria-label={c.name}
+              onClick={() => {
+                editor.chain().focus().setColor(c.value).run()
+                setOpen(false)
+              }}
+            />
+          ))}
+          <button
+            type="button"
+            className="tb-color-reset"
+            onClick={() => {
+              editor.chain().focus().unsetColor().run()
+              setOpen(false)
+            }}
+          >
+            Couleur normale
+          </button>
+        </div>
+      )}
+    </span>
   )
 }

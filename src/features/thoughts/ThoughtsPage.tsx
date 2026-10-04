@@ -9,6 +9,7 @@ import { LinkPicker } from '../../components/Linked'
 import { Menu, Modal, useUI } from '../../components/ui'
 import { captureIdea } from '../notes/api'
 import { relative } from '../../lib/dates'
+import { ThoughtsTabs } from './ThoughtsTabs'
 import './thoughts.css'
 
 const TINTS = ['#fbf1c7', '#f6dfe0', '#e3ebdf', '#e8e3f3', '#dfe8ef', '#f4e2d8']
@@ -71,6 +72,9 @@ export function ThoughtsPage() {
 
   return (
     <div className="page thoughts-page">
+      <div style={{ marginBottom: 22 }}>
+        <ThoughtsTabs />
+      </div>
       <div className="page-head">
         <div>
           <h1>Pensées à plat</h1>

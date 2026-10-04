@@ -7,6 +7,8 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
+    "app": "vite build && vite preview --open",
+    "icons": "node scripts/icons.mjs",
     "typecheck": "tsc"
   },
   "dependencies": {
@@ -17,6 +19,7 @@
     "@tiptap/extension-table": "^3.31.4",
     "@tiptap/extension-task-item": "^3.31.4",
     "@tiptap/extension-task-list": "^3.31.4",
+    "@tiptap/extension-text-style": "^3.31.4",
     "@tiptap/extensions": "^3.31.4",
     "@tiptap/pm": "^3.31.4",
     "@tiptap/react": "^3.31.4",
@@ -31,7 +34,11 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.1",
+    "sharp": "^0.35.5",
     "typescript": "^7.0.2",
-    "vite": "^8.3.2"
+    "vite": "^8.3.2",
+    "vite-plugin-pwa": "^2.0.0",
+    "workbox-build": "^7.4.1",
+    "workbox-window": "^7.4.1"
   }
 }
