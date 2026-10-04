@@ -1,0 +1,79 @@
+/* Minion — design tokens
+   Papier crème, encre douce, accents personnalisables. */
+
+:root {
+  --paper: #faf6ef;
+  --paper-deep: #f3ece0;
+  --surface: #fffdf9;
+  --surface-2: #f7f1e7;
+  --ink: #2e2a26;
+  --ink-soft: #5b534b;
+  --ink-faint: #958b80;
+  --line: #e9e0d2;
+  --line-strong: #d9ccb9;
+
+  /* Accent par défaut : rose poudré */
+  --accent: #c98b8b;
+  --accent-deep: #a8676a;
+  --accent-soft: #f3e1df;
+  --accent-wash: #faf0ee;
+
+  --gold: #c9a46a;
+  --sage: #8fa58a;
+  --lavender: #a397c4;
+  --terracotta: #c8805f;
+  --mist: #7f9db5;
+  --danger: #b4544e;
+
+  --font-display: 'Fraunces Variable', 'Georgia', serif;
+  --font-body: 'Inter Variable', 'Segoe UI', system-ui, sans-serif;
+  --font-hand: 'Caveat', 'Segoe Script', cursive;
+
+  --r-sm: 10px;
+  --r-md: 14px;
+  --r-lg: 20px;
+  --r-xl: 28px;
+
+  --shadow-sm: 0 1px 2px rgba(80, 60, 40, 0.05), 0 2px 8px rgba(80, 60, 40, 0.04);
+  --shadow-md: 0 2px 6px rgba(80, 60, 40, 0.05), 0 10px 30px rgba(80, 60, 40, 0.07);
+  --shadow-lg: 0 6px 16px rgba(80, 60, 40, 0.07), 0 24px 60px rgba(80, 60, 40, 0.12);
+
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --t-fast: 180ms;
+  --t-med: 280ms;
+  --t-slow: 420ms;
+
+  --sidebar-w: 248px;
+}
+
+/* Palettes d'accent */
+:root[data-accent='sauge'] {
+  --accent: #8fa58a; --accent-deep: #66805f; --accent-soft: #e3ebdf; --accent-wash: #f1f5ee;
+}
+:root[data-accent='lavande'] {
+  --accent: #a397c4; --accent-deep: #7a6da3; --accent-soft: #e8e3f3; --accent-wash: #f4f1f9;
+}
+:root[data-accent='terracotta'] {
+  --accent: #c8805f; --accent-deep: #a35f40; --accent-soft: #f4e2d8; --accent-wash: #faf1ec;
+}
+:root[data-accent='brume'] {
+  --accent: #7f9db5; --accent-deep: #5a7a93; --accent-soft: #dfe8ef; --accent-wash: #eff4f8;
+}
+
+/* Thème « Soir » : papier sombre et chaud */
+:root[data-theme='soir'] {
+  --paper: #1f1b18;
+  --paper-deep: #181512;
+  --surface: #2a2521;
+  --surface-2: #332d28;
+  --ink: #f1e9de;
+  --ink-soft: #c9bdaf;
+  --ink-faint: #8d8174;
+  --line: #3c352f;
+  --line-strong: #4d443c;
+  --accent-soft: color-mix(in srgb, var(--accent) 22%, #2a2521);
+  --accent-wash: color-mix(in srgb, var(--accent) 12%, #2a2521);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.45);
+}
