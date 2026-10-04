@@ -22,7 +22,7 @@ Une case n'est cochée que si la fonction est utilisable **et** sauvegardée. Vo
 - [x] Réglages : prénom, apparence, ouverture, catégories, types d'événements, sauvegarde / restauration dans un fichier, espace utilisé
 - [x] Couleur du texte dans l’éditeur (10 couleurs) — notes, journal, fiches
 - [x] Application installable depuis le navigateur (icône, fenêtre à part, hors ligne) — testée en local
-- [ ] Hébergement pour l’installer chez Einat (à décider : Netlify, GitHub Pages…)
+- [x] En ligne sur GitHub Pages (https://ovzegla.github.io/minion/), installation en 1 clic, mises à jour automatiques
 - [ ] Partage explicite d'une page de journal (volontairement absent : privé par défaut)
 
 ## Étape 2 — Musique et apprentissage

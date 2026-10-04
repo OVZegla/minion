@@ -2,6 +2,8 @@
 
 L'univers personnel d'Einat : notes, envies, projets, moodboards, calendrier, journal.
 
+**Adresse : https://ovzegla.github.io/minion/** — ouvrir dans Edge ou Chrome, puis « Installer Minion » (barre latérale ou accueil). Les mises à jour arrivent toutes seules.
+
 ## Tester
 
 Double-clic sur **`Lancer Minion.bat`** : l'app s'installe au premier lancement, puis s'ouvre dans le navigateur (http://localhost:5173). Fermer la fenêtre noire arrête l'app.
