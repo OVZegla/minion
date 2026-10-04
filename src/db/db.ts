@@ -35,6 +35,7 @@ class MinionDB extends Dexie {
   settings!: Table<Settings, string>
   songs!: Table<Song, string>
   decks!: Table<Deck, string>
+  kv!: Table<{ id: string; value: unknown }, string>
 
   constructor() {
     super('minion')
@@ -59,6 +60,8 @@ class MinionDB extends Dexie {
       songs: 'id, updatedAt, openedAt',
       decks: 'id, updatedAt',
     })
+    // v3 : préférences et progressions diverses (atelier plume…)
+    this.version(3).stores({ kv: 'id' })
   }
 }
 

@@ -1,0 +1,85 @@
+/* ---------- Carte des niveaux ---------- */
+.pen-keys { margin-bottom: 26px; }
+.pen-keys-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px 18px; margin-top: 10px; font-size: 0.88rem; color: var(--ink-soft); }
+kbd { display: inline-block; font-family: var(--font-body); font-size: 0.74rem; font-weight: 600; padding: 2px 7px; border-radius: 6px; background: var(--surface-2); border: 1px solid var(--line-strong); border-bottom-width: 2px; color: var(--ink); margin-right: 4px; white-space: nowrap; }
+.pen-chapter { margin-bottom: 26px; }
+.pen-chapter h3 { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.pen-chapter-num { width: 26px; height: 26px; border-radius: 50%; background: var(--accent-soft); color: var(--accent-deep); display: grid; place-items: center; font-size: 0.85rem; font-family: var(--font-body); font-weight: 600; }
+.pen-levels { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 14px; }
+.pen-level { padding: 12px; text-align: left; cursor: pointer; border: 1px solid var(--line); transition: transform var(--t-med) var(--ease), box-shadow var(--t-med); font: inherit; color: inherit; }
+.pen-level:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.pen-level-preview { width: 100%; height: 86px; color: var(--accent); background: var(--surface-2); border-radius: 10px; }
+.pen-level-title { font-weight: 500; font-size: 0.9rem; margin-top: 8px; }
+.pen-stars { display: inline-flex; gap: 2px; color: var(--line-strong); font-size: 0.95rem; }
+.pen-stars .on { color: #e8b60f; }
+.pen-stars.big { font-size: 1.6rem; }
+
+/* ---------- Espace de travail façon Photoshop ---------- */
+.ps {
+  --ps-bg: #262626;
+  --ps-panel: #323232;
+  --ps-bar: #3c3c3c;
+  --ps-line: #1e1e1e;
+  --ps-text: #d6d6d6;
+  --ps-faint: #9a9a9a;
+  --ps-accent: #2f80ed;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--ps-bg);
+  color: var(--ps-text);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-size: 12.5px;
+}
+.ps-menubar { display: flex; align-items: center; gap: 14px; height: 34px; padding: 0 10px; background: var(--ps-panel); border-bottom: 1px solid var(--ps-line); }
+.ps-back { display: inline-flex; align-items: center; gap: 4px; border: none; background: none; color: var(--ps-text); cursor: pointer; padding: 4px 8px; border-radius: 4px; font-size: 12.5px; }
+.ps-back:hover { background: #454545; }
+.ps-doc-title { color: var(--ps-faint); }
+.ps-stars { margin-left: auto; }
+.ps-options { display: flex; align-items: center; gap: 12px; height: 34px; padding: 0 12px; background: var(--ps-bar); border-bottom: 1px solid var(--ps-line); white-space: nowrap; overflow: hidden; }
+.ps-opt-tool { font-weight: 600; }
+.ps-opt-sep { width: 1px; height: 18px; background: #555; }
+.ps-opt-help { color: var(--ps-faint); overflow: hidden; text-overflow: ellipsis; }
+.ps-mod { padding: 2px 8px; border-radius: 4px; border: 1px solid #555; color: var(--ps-faint); font-size: 11px; transition: all 80ms; }
+.ps-mod.on { background: var(--ps-accent); border-color: var(--ps-accent); color: #fff; }
+.ps-body { flex: 1; display: flex; min-height: 0; }
+.ps-tools { width: 44px; flex-shrink: 0; background: var(--ps-panel); border-right: 1px solid var(--ps-line); display: flex; flex-direction: column; align-items: center; padding: 8px 0; gap: 2px; }
+.ps-tool { position: relative; width: 34px; height: 34px; border: none; border-radius: 4px; background: none; color: var(--ps-text); cursor: pointer; display: grid; place-items: center; }
+.ps-tool:hover { background: #454545; }
+.ps-tool.on { background: #505050; box-shadow: inset 0 0 0 1px #6a6a6a; }
+.ps-tool-key { position: absolute; right: 2px; bottom: 1px; font-size: 8px; color: var(--ps-faint); }
+.ps-canvas { flex: 1; min-width: 0; display: grid; place-items: center; padding: 24px; overflow: auto; }
+.ps-artboard { width: min(100%, calc((100vh - 140px) * 800 / 520)); box-shadow: 0 0 0 1px #111, 0 8px 30px rgba(0, 0, 0, 0.5); line-height: 0; }
+.pen-svg { width: 100%; height: auto; display: block; touch-action: none; user-select: none; }
+.ps-panel { width: 280px; flex-shrink: 0; background: var(--ps-panel); border-left: 1px solid var(--ps-line); overflow-y: auto; padding: 0 0 18px; }
+.ps-panel-title { background: #2b2b2b; color: var(--ps-faint); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; padding: 7px 12px; margin: 14px 0 8px; border-top: 1px solid var(--ps-line); border-bottom: 1px solid var(--ps-line); }
+.ps-panel-title:first-child { margin-top: 0; }
+.ps-goal { padding: 0 12px; font-size: 14px; color: #fff; line-height: 1.45; }
+.ps-tips { padding: 0 12px 0 28px; margin: 10px 0; line-height: 1.55; color: var(--ps-text); }
+.ps-tips li { margin-bottom: 4px; }
+.ps-keychips { padding: 0 12px; display: flex; flex-wrap: wrap; gap: 4px; }
+.ps-keychips kbd { background: #454545; border-color: #5a5a5a; color: #fff; }
+.ps-btn { display: block; width: calc(100% - 24px); margin: 6px 12px; padding: 7px 10px; border-radius: 4px; border: 1px solid #555; background: #454545; color: #fff; cursor: pointer; font: inherit; text-align: center; }
+.ps-btn:hover:not(:disabled) { background: #505050; }
+.ps-btn:disabled { opacity: 0.5; }
+.ps-btn.primary { background: var(--ps-accent); border-color: var(--ps-accent); }
+.ps-btn.primary:hover { background: #4a90f0; }
+.ps-btn.ghost { background: none; }
+.ps-check { display: flex; align-items: center; gap: 8px; padding: 4px 12px; cursor: pointer; }
+.ps-check input[type='range'] { flex: 1; }
+.ps-actions { display: flex; flex-direction: column; margin-top: 14px; border-top: 1px solid var(--ps-line); padding-top: 8px; }
+.ps-result { margin: 12px; padding: 12px; border-radius: 6px; background: #2b2b2b; border: 1px solid #444; animation: page-in var(--t-slow) var(--ease); }
+.ps-result.s3 { border-color: #e8b60f; }
+.ps-result p { margin: 6px 0; line-height: 1.5; }
+.ps-result .ps-btn { width: 100%; margin: 10px 0 0; }
+.ps-score { color: var(--ps-faint); margin-top: 2px; }
+.ps-result .pen-stars { color: #555; }
+
+@media (max-width: 1000px) {
+  .ps { height: auto; min-height: 100vh; }
+  .ps-body { flex-direction: column; }
+  .ps-tools { width: auto; flex-direction: row; justify-content: center; }
+  .ps-panel { width: auto; }
+  .ps-artboard { width: 100%; }
+}
+.ps-stars span { color: #555; } .ps-stars span.on { color: #e8b60f; }

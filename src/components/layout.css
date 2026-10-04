@@ -156,3 +156,5 @@
 .side-install:hover { transform: translateY(-1px); box-shadow: var(--shadow-sm); }
 .side-install b { display: block; font-size: 0.9rem; font-weight: 600; }
 .side-install small { display: block; font-size: 0.74rem; color: var(--ink-faint); }
+/* espaces de travail plein écran (atelier plume, studio) */
+.shell.immersive .sidebar, .shell.immersive .bottom-bar, .shell.immersive .sidebar-scrim { display: none !important; }

@@ -25,7 +25,11 @@ const NAV = [
   { to: '/pensees', icon: 'cloud', label: 'Pensées à plat' },
   { to: '/synthe', icon: 'music', label: 'Atelier synthé', group: 'Créer et apprendre' },
   { to: '/apprendre', icon: 'target', label: 'Apprendre' },
+  { to: '/plume', icon: 'pen', label: 'Atelier plume' },
 ]
+
+/** Espaces de travail plein écran (sans le menu de Minion). */
+const IMMERSIVE = /^\/(plume\/[^/]+|studio\/[^/]+)/
 
 export function Layout() {
   const settings = useSettings()
@@ -57,7 +61,7 @@ export function Layout() {
   }, [])
 
   return (
-    <div className="shell">
+    <div className={`shell ${IMMERSIVE.test(loc.pathname) ? 'immersive' : ''}`}>
       <aside className={`sidebar no-print ${mobileNav ? 'open' : ''}`}>
         <div className="brand" onClick={() => navigate('/')}>
           <Mascot size={34} className="brand-mascot" />
