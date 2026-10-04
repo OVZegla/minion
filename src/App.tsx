@@ -10,6 +10,7 @@ import { HomePage } from './features/home/HomePage'
 import { InboxPage } from './features/notes/InboxPage'
 import { LibraryPage } from './features/notes/LibraryPage'
 import { NoteEditorPage } from './features/notes/NoteEditorPage'
+import { ParcheminPage } from './features/wishes/ParcheminPage'
 
 const router = createHashRouter([
   {
@@ -21,6 +22,7 @@ const router = createHashRouter([
       { path: 'boite', element: <InboxPage /> },
       { path: 'notes', element: <LibraryPage /> },
       { path: 'notes/:id', element: <NoteEditorPage /> },
+      { path: 'parchemin', element: <ParcheminPage /> },
     ],
   },
 ])
@@ -38,7 +40,7 @@ export function App() {
       // Ses propres phrases (trésor) rejoignent le tirage de l'ouverture
       const mine = await db.treasures.where('kind').equals('phrase').toArray()
       setExtra(mine.map((t) => t.text).filter(Boolean))
-      setShowSplash(s.splash)
+      setShowSplash(s.splash && !location.search.includes('nosplash'))
       setReady(true)
       requestPersistence()
     })()

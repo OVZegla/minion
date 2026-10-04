@@ -4,6 +4,7 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../db/db'
 import { useSettings } from '../db/settings'
 import { Icon } from './Icon'
+import { deName } from '../lib/phrases'
 import { QuickCapture } from './QuickCapture'
 import { SearchPalette } from './SearchPalette'
 import './layout.css'
@@ -57,7 +58,7 @@ export function Layout() {
           </svg>
           <div>
             <div className="brand-name">Minion</div>
-            <div className="brand-sub">l’univers de {settings.name}</div>
+            <div className="brand-sub">l’univers {deName(settings.name)}</div>
           </div>
         </div>
 

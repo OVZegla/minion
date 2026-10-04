@@ -143,3 +143,13 @@ export function greeting(date = new Date()): 'Bonjour' | 'Bonsoir' {
   const h = date.getHours()
   return h >= 5 && h < 18 ? 'Bonjour' : 'Bonsoir'
 }
+
+/** « de Léa » / « d’Einat » : élision devant une voyelle ou un h muet. */
+export function deName(name: string) {
+  return /^[aeiouyhàâäéèêëîïôöùûü]/i.test(name.trim()) ? `d’${name}` : `de ${name}`
+}
+
+/** Seulement la préposition : « de » ou « d’ ». */
+export function deWord(name: string) {
+  return deName(name).startsWith('d’') ? 'd’' : 'de'
+}
