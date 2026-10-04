@@ -3,15 +3,25 @@ import { createHashRouter, RouterProvider } from 'react-router-dom'
 import { db, requestPersistence } from './db/db'
 import { applyTheme, getSettings, useSettings } from './db/settings'
 import { Layout } from './components/Layout'
+import { ErrorPage } from './components/ErrorPage'
 import { Splash } from './components/Splash'
 import { UIProvider } from './components/ui'
 import { HomePage } from './features/home/HomePage'
+import { InboxPage } from './features/notes/InboxPage'
+import { LibraryPage } from './features/notes/LibraryPage'
+import { NoteEditorPage } from './features/notes/NoteEditorPage'
 
 const router = createHashRouter([
   {
     path: '/',
     element: <Layout />,
-    children: [{ index: true, element: <HomePage /> }],
+    errorElement: <ErrorPage />,
+    children: [
+      { index: true, element: <HomePage /> },
+      { path: 'boite', element: <InboxPage /> },
+      { path: 'notes', element: <LibraryPage /> },
+      { path: 'notes/:id', element: <NoteEditorPage /> },
+    ],
   },
 ])
 

@@ -226,3 +226,24 @@ button.chip { cursor: pointer; }
   body { background: #fff; }
   .no-print { display: none !important; }
 }
+
+/* ---------- Liens entre contenus ---------- */
+.linked-list { display: flex; flex-direction: column; gap: 2px; }
+.linked-item { display: flex; align-items: center; gap: 4px; }
+.linked-open {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 8px;
+  border: none;
+  background: none;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  text-align: left;
+  color: var(--accent-deep);
+}
+.linked-open:hover { background: var(--accent-wash); }
+.linked-title { color: var(--ink); flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.9rem; }
+.linked-type { font-size: 0.75rem; }

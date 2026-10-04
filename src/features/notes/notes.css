@@ -1,0 +1,144 @@
+/* ---------- Bibliothèque ---------- */
+.library { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 40px; align-items: start; }
+.lib-side { position: sticky; top: 32px; display: flex; flex-direction: column; gap: 2px; }
+.lib-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  background: none;
+  border-radius: var(--r-sm);
+  color: var(--ink-soft);
+  cursor: pointer;
+  font-size: 0.9rem;
+  text-align: left;
+}
+.lib-link > .faint { margin-left: auto; font-size: 0.78rem; }
+.lib-link:hover { background: var(--surface-2); }
+.lib-link.on { background: var(--surface); color: var(--ink); box-shadow: var(--shadow-sm); font-weight: 500; }
+.lib-link-name { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lib-link .lib-more { opacity: 0; width: 24px; height: 24px; }
+.lib-link:hover .lib-more { opacity: 1; }
+.lib-link .faint + .menu-wrap { margin-left: 0; }
+.lib-section { display: flex; align-items: center; justify-content: space-between; padding: 18px 10px 6px; }
+.lib-hint { font-size: 0.8rem; padding: 0 10px; line-height: 1.4; }
+
+.lib-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink-faint);
+}
+.lib-search input { border: none; background: none; width: 150px; }
+.lib-search input:focus { outline: none; }
+
+.note-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 18px; }
+.note-card { overflow: hidden; display: flex; flex-direction: column; }
+.note-card-cover { height: 84px; }
+.note-card-body { padding: 16px 18px 14px; display: flex; flex-direction: column; flex: 1; }
+.note-card-icon { font-size: 1.2rem; line-height: 1.4; }
+.note-card-title { font-size: 1.12rem; line-height: 1.3; }
+.note-card-text {
+  margin-top: 8px;
+  font-size: 0.87rem;
+  color: var(--ink-soft);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.note-card-foot { margin-top: auto; padding-top: 14px; gap: 6px; }
+
+/* ---------- Éditeur de note ---------- */
+.note-page { min-height: 100vh; }
+.note-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  background: color-mix(in srgb, var(--paper) 90%, transparent);
+  backdrop-filter: blur(10px);
+}
+.note-cover { height: 220px; position: relative; margin-top: -54px; }
+.note-cover-btn { position: absolute; right: 24px; bottom: 16px; opacity: 0; transition: opacity var(--t-fast); }
+.note-cover:hover .note-cover-btn { opacity: 1; }
+
+.note-layout {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 24px 48px 120px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 250px;
+  gap: 56px;
+  animation: page-in var(--t-slow) var(--ease);
+}
+.note-layout.has-cover { padding-top: 0; }
+.note-layout.has-cover .note-icon-row { margin-top: -30px; }
+.note-icon-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; min-height: 52px; }
+.note-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  font-size: 28px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.note-meta { margin: 16px 0 6px; display: flex; flex-direction: column; gap: 6px; color: var(--ink-faint); }
+.note-meta-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.note-select {
+  border: 1px solid transparent;
+  background: transparent;
+  padding: 4px 6px;
+  border-radius: 8px;
+  color: var(--ink-soft);
+  cursor: pointer;
+  font-size: 0.88rem;
+}
+.note-select:hover { border-color: var(--line); background: var(--surface); }
+.note-side { position: sticky; top: 72px; align-self: start; display: flex; flex-direction: column; gap: 24px; padding-top: 60px; }
+.note-dates { font-size: 0.78rem; line-height: 1.6; }
+
+.tag-input { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.tag-input input { border: none; background: none; padding: 4px; font-size: 0.88rem; min-width: 100px; color: var(--ink); }
+.tag-input input:focus { outline: none; }
+.tag-x { border: none; background: none; padding: 0; color: inherit; display: grid; cursor: pointer; opacity: 0.6; }
+.tag-x:hover { opacity: 1; }
+
+/* ---------- Boîte d'entrée ---------- */
+.inbox-title { font-family: var(--font-display); font-size: 1.15rem; }
+.inbox-text { font-size: 0.9rem; margin-top: 4px; white-space: pre-line; }
+.inbox-file { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--line); }
+
+.print-only { display: none; }
+
+@media (max-width: 1000px) {
+  .library { grid-template-columns: 1fr; gap: 20px; }
+  .lib-side { position: static; }
+  .note-layout { grid-template-columns: 1fr; padding: 16px 20px 120px; gap: 24px; }
+  .note-side { position: static; padding-top: 0; }
+}
+
+@media print {
+  @page { margin: 22mm 20mm; }
+  .sidebar, .bottom-bar, .note-topbar, .note-side, .toolbar { display: none !important; }
+  .note-cover { margin: 0 0 8mm; height: 45mm; border-radius: 4mm; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .note-layout { display: block; padding: 0; max-width: none; }
+  .print-only { display: block; }
+  .note-print-icon { font-size: 28pt; margin-bottom: 4mm; }
+  .note-print-meta { margin: 3mm 0 8mm; font-size: 9pt; }
+  .title-input { font-size: 26pt; }
+}
