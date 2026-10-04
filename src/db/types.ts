@@ -8,6 +8,8 @@ export type EntityType =
   | 'journal'
   | 'thought'
   | 'treasure'
+  | 'song'
+  | 'deck'
 
 export interface Base {
   id: string
@@ -176,7 +178,7 @@ export interface Link {
 }
 
 export interface HomeBlock {
-  id: 'today' | 'capture' | 'recent' | 'wish' | 'journal' | 'moodboard' | 'treasure' | 'projects'
+  id: 'today' | 'capture' | 'recent' | 'wish' | 'journal' | 'moodboard' | 'treasure' | 'projects' | 'song'
   visible: boolean
 }
 
@@ -190,4 +192,56 @@ export interface Settings {
   projectColumns: { id: string; name: string }[]
   wishCategories: string[]
   eventKinds: { id: string; name: string; color: string }[]
+}
+
+/* ---------- Atelier synthé ---------- */
+
+export type Hand = 'R' | 'L'
+
+export interface SongNote {
+  id: string
+  pitch: number // MIDI (60 = do central)
+  start: number // en temps (noire = 1), depuis le début du morceau
+  dur: number // en temps
+  hand: Hand
+  finger?: number | null // doigté 1–5
+}
+
+export interface Song extends Base {
+  title: string
+  bpm: number // tempo de référence
+  timeSig: [number, number] // ex. [4, 4]
+  measures: number
+  notes: SongNote[]
+  chords: { id: string; beat: number; name: string }[] // accords chiffrés (ex. « Am »)
+  annotations: { id: string; beat: number; text: string }[]
+  sections: { id: string; measure: number; name: string }[] // index de mesure (0 = première)
+  noteNames: 'fr' | 'en'
+  openedAt?: number
+  lastPracticeAt?: number
+}
+
+/* ---------- Apprendre ---------- */
+
+export interface Card {
+  id: string
+  q: string
+  a: string
+  /** passage de la note d'où vient la carte, si elle a été proposée automatiquement */
+  source?: string | null
+  auto?: boolean // proposée par Minion (à vérifier), sinon écrite par elle
+  box: number // boîte de Leitner 0–4
+  dueAt: number
+  seen: number
+  right: number
+}
+
+export interface Deck extends Base {
+  title: string
+  topic: string
+  noteIds: string[]
+  cards: Card[]
+  summary?: { content: unknown | null; text: string; auto: boolean } | null
+  deepen: { id: string; text: string; done: boolean }[] // ce que je veux approfondir
+  lastSessionAt?: number
 }

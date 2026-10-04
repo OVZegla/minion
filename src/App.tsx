@@ -21,6 +21,8 @@ import { JournalEntryPage } from './features/journal/JournalEntryPage'
 import { ThoughtsPage } from './features/thoughts/ThoughtsPage'
 import { TreasurePage } from './features/treasure/TreasurePage'
 import { SettingsPage } from './features/settings/SettingsPage'
+import { SongsPage } from './features/synth/SongsPage'
+import { SongEditorPage } from './features/synth/SongEditor'
 
 const router = createHashRouter([
   {
@@ -42,6 +44,8 @@ const router = createHashRouter([
       { path: 'journal/:id', element: <JournalEntryPage /> },
       { path: 'pensees', element: <ThoughtsPage /> },
       { path: 'bonheurs', element: <TreasurePage /> },
+      { path: 'synthe', element: <SongsPage /> },
+      { path: 'synthe/:id', element: <SongEditorPage /> },
       { path: 'reglages', element: <SettingsPage /> },
       { path: '*', element: <ErrorPage /> },
     ],

@@ -145,3 +145,4 @@
 }
 .brand-mascot { transition: transform var(--t-med) var(--ease); }
 .brand:hover .brand-mascot { transform: rotate(-6deg) scale(1.06); }
+.side-group { font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-faint); font-weight: 600; padding: 16px 12px 4px; }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../db/db'
@@ -22,6 +22,8 @@ const NAV = [
   { to: '/calendrier', icon: 'calendar', label: 'Calendrier' },
   { to: '/journal', icon: 'feather', label: 'Journal' },
   { to: '/pensees', icon: 'cloud', label: 'Pensées à plat' },
+  { to: '/synthe', icon: 'music', label: 'Atelier synthé', group: 'Créer et apprendre' },
+  { to: '/apprendre', icon: 'target', label: 'Apprendre' },
 ]
 
 export function Layout() {
@@ -75,11 +77,14 @@ export function Layout() {
 
         <nav className="side-nav">
           {NAV.map((n) => (
-            <NavLink key={n.to} to={n.to} end={n.end} className={({ isActive }) => `side-link ${isActive || (n.to === "/pensees" && loc.pathname === "/bonheurs") ? "active" : ""}`}>
+            <Fragment key={n.to}>
+            {'group' in n && n.group && <div className="side-group">{n.group}</div>}
+            <NavLink to={n.to} end={n.end} className={({ isActive }) => `side-link ${isActive || (n.to === "/pensees" && loc.pathname === "/bonheurs") ? "active" : ""}`}>
               <Icon name={n.icon} size={18} />
               <span>{n.label}</span>
               {n.badge === 'inbox' && inboxCount > 0 && <span className="side-badge">{inboxCount}</span>}
             </NavLink>
+            </Fragment>
           ))}
         </nav>
 

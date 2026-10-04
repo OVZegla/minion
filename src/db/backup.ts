@@ -1,6 +1,6 @@
 import { db } from './db'
 
-const TABLES = ['notes', 'folders', 'wishes', 'projects', 'tasks', 'events', 'journal', 'thoughts', 'treasures', 'moodboards', 'palettes', 'links', 'settings'] as const
+const TABLES = ['notes', 'folders', 'wishes', 'projects', 'tasks', 'events', 'journal', 'thoughts', 'treasures', 'moodboards', 'palettes', 'links', 'settings', 'songs', 'decks'] as const
 
 function blobToDataUrl(b: Blob): Promise<string> {
   return new Promise((res, rej) => {

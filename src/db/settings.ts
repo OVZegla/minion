@@ -17,6 +17,7 @@ export const DEFAULT_SETTINGS: Settings = {
     { id: 'moodboard', visible: true },
     { id: 'treasure', visible: false },
     { id: 'projects', visible: false },
+    { id: 'song', visible: true },
   ],
   projectColumns: [
     { id: 'idee', name: 'Idée' },
@@ -36,14 +37,21 @@ export const DEFAULT_SETTINGS: Settings = {
   ],
 }
 
+function normalize(s?: Partial<Settings>): Settings {
+  const merged = { ...DEFAULT_SETTINGS, ...s } as Settings
+  // blocs d'accueil apparus depuis : ajoutés à la fin
+  const ids = new Set(merged.homeBlocks.map((b) => b.id))
+  merged.homeBlocks = [...merged.homeBlocks, ...DEFAULT_SETTINGS.homeBlocks.filter((b) => !ids.has(b.id))]
+  return merged
+}
+
 export async function getSettings(): Promise<Settings> {
-  const s = await db.settings.get('settings')
-  return { ...DEFAULT_SETTINGS, ...s }
+  return normalize(await db.settings.get('settings'))
 }
 
 export function useSettings(): Settings {
   const s = useLiveQuery(() => db.settings.get('settings'), [])
-  return { ...DEFAULT_SETTINGS, ...s }
+  return normalize(s)
 }
 
 export async function updateSettings(patch: Partial<Settings>) {

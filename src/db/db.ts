@@ -14,6 +14,8 @@ import type {
   Thought,
   Treasure,
   Wish,
+  Song,
+  Deck,
 } from './types'
 
 class MinionDB extends Dexie {
@@ -31,6 +33,8 @@ class MinionDB extends Dexie {
   assets!: Table<Asset, string>
   links!: Table<Link, string>
   settings!: Table<Settings, string>
+  songs!: Table<Song, string>
+  decks!: Table<Deck, string>
 
   constructor() {
     super('minion')
@@ -49,6 +53,11 @@ class MinionDB extends Dexie {
       assets: 'id',
       links: 'id, [fromType+fromId], [toType+toId]',
       settings: 'id',
+    })
+    // v2 : atelier synthé et apprentissage
+    this.version(2).stores({
+      songs: 'id, updatedAt, openedAt',
+      decks: 'id, updatedAt',
     })
   }
 }

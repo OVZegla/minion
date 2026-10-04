@@ -14,6 +14,7 @@ import { captureTo } from '../../components/QuickCapture'
 import { occurrences } from '../calendar/api'
 import { WISH_STATES } from '../wishes/meta'
 import { MoodboardThumb } from '../moodboards/MoodboardThumb'
+import { MiniRoll } from '../synth/SongsPage'
 import './home.css'
 
 const BLOCK_LABEL: Record<HomeBlock['id'], string> = {
@@ -23,8 +24,9 @@ const BLOCK_LABEL: Record<HomeBlock['id'], string> = {
   wish: 'Une envie du parchemin',
   journal: 'Journal',
   moodboard: 'Moodboard à la une',
-  treasure: 'Un trésor',
+  treasure: 'Un petit bonheur',
   projects: 'Projets en cours',
+  song: 'Reprendre un morceau',
 }
 
 export function HomePage() {
@@ -111,6 +113,8 @@ function Block({ id }: { id: HomeBlock['id'] }) {
       return <TreasureBlock />
     case 'projects':
       return <ProjectsBlock />
+    case 'song':
+      return <SongBlock />
   }
 }
 
@@ -332,7 +336,7 @@ function TreasureBlock() {
   const t = items.length ? items[Math.floor(seed * items.length)] : null
   const img = useAssetUrl(t?.imageId)
   return (
-    <Panel title="Un trésor" icon="heart" to="/tresor">
+    <Panel title="Un petit bonheur" icon="heart" to="/bonheurs">
       {!t ? (
         <p className="muted home-calm">Garde ici des phrases, souvenirs et petites victoires qui te font du bien.</p>
       ) : (
@@ -365,6 +369,36 @@ function ProjectsBlock() {
               </span>
             </button>
           ))}
+        </div>
+      )}
+    </Panel>
+  )
+}
+
+function SongBlock() {
+  const navigate = useNavigate()
+  const song = useLiveQuery(async () => {
+    const all = await db.songs.toArray()
+    return all.sort((a, b) => Math.max(b.lastPracticeAt ?? 0, b.openedAt ?? 0, b.updatedAt) - Math.max(a.lastPracticeAt ?? 0, a.openedAt ?? 0, a.updatedAt))[0] ?? null
+  }, [])
+  return (
+    <Panel title="Reprendre un morceau" icon="music" to="/synthe">
+      {!song ? (
+        <>
+          <p className="muted home-calm" style={{ marginBottom: 12 }}>Écris ton premier morceau dans l’atelier synthé.</p>
+          <button className="btn sm" onClick={() => navigate('/synthe')}>
+            <Icon name="music" size={15} /> Ouvrir l’atelier
+          </button>
+        </>
+      ) : (
+        <div className="home-wish" onClick={() => navigate(`/synthe/${song.id}`)}>
+          <MiniRoll song={song} height={70} />
+          <div className="home-wish-title" style={{ marginTop: 10, fontSize: '1.15rem' }}>{song.title || 'Sans titre'}</div>
+          <div className="row">
+            <span className="faint" style={{ fontSize: '0.8rem' }}>♩ {song.bpm} · {song.lastPracticeAt ? `joué ${relative(song.lastPracticeAt)}` : 'pas encore joué'}</span>
+            <span className="spacer" />
+            <button className="btn primary sm">▶ Reprendre</button>
+          </div>
         </div>
       )}
     </Panel>
