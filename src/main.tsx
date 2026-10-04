@@ -6,6 +6,7 @@ import '@fontsource-variable/inter'
 import '@fontsource/caveat/500.css'
 import './styles/tokens.css'
 import './styles/base.css'
+import './lib/install'
 import { App } from './App'
 
 createRoot(document.getElementById('root')!).render(

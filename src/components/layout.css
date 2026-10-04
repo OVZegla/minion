@@ -146,3 +146,13 @@
 .brand-mascot { transition: transform var(--t-med) var(--ease); }
 .brand:hover .brand-mascot { transform: rotate(-6deg) scale(1.06); }
 .side-group { font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-faint); font-weight: 600; padding: 16px 12px 4px; }
+.side-install {
+  display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; margin-bottom: 8px;
+  padding: 10px 12px; border-radius: var(--r-md); border: 1px solid color-mix(in srgb, #e8b60f 45%, var(--line));
+  background: color-mix(in srgb, #e8b60f 10%, var(--surface)); cursor: pointer;
+  transition: transform var(--t-fast) var(--ease), box-shadow var(--t-fast);
+  animation: page-in var(--t-slow) var(--ease);
+}
+.side-install:hover { transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+.side-install b { display: block; font-size: 0.9rem; font-weight: 600; }
+.side-install small { display: block; font-size: 0.74rem; color: var(--ink-faint); }

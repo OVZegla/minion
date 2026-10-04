@@ -15,6 +15,8 @@ import { occurrences } from '../calendar/api'
 import { WISH_STATES } from '../wishes/meta'
 import { MoodboardThumb } from '../moodboards/MoodboardThumb'
 import { MiniRoll } from '../synth/SongsPage'
+import { Mascot } from '../../components/Mascot'
+import { useInstall } from '../../lib/install'
 import './home.css'
 
 const BLOCK_LABEL: Record<HomeBlock['id'], string> = {
@@ -61,6 +63,8 @@ export function HomePage() {
           {editing ? 'Terminé' : 'Personnaliser'}
         </button>
       </header>
+
+      <InstallBanner />
 
       {editing && (
         <div className="card pad home-editor">
@@ -402,5 +406,44 @@ function SongBlock() {
         </div>
       )}
     </Panel>
+  )
+}
+
+function InstallBanner() {
+  const { canInstall, install } = useInstall()
+  const [hidden, setHidden] = useState(() => {
+    try {
+      return localStorage.getItem('minion:hideInstall') === '1'
+    } catch {
+      return false
+    }
+  })
+  if (!canInstall || hidden) return null
+  return (
+    <div className="card install-banner">
+      <Mascot size={52} />
+      <div style={{ flex: 1 }}>
+        <h3>Installer Minion sur cet ordinateur</h3>
+        <p className="muted">Une icône sur le bureau, une fenêtre rien qu’à toi, et ça marche même sans internet.</p>
+      </div>
+      <button className="btn primary" onClick={install}>
+        Installer
+      </button>
+      <button
+        className="btn ghost icon sm"
+        aria-label="Plus tard"
+        title="Plus tard"
+        onClick={() => {
+          setHidden(true)
+          try {
+            localStorage.setItem('minion:hideInstall', '1')
+          } catch {
+            /* rien */
+          }
+        }}
+      >
+        <Icon name="x" size={15} />
+      </button>
+    </div>
   )
 }

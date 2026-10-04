@@ -7,6 +7,7 @@ import { Icon } from './Icon'
 import { Mascot } from './Mascot'
 import { useUI } from './ui'
 import { useReminders } from '../features/calendar/reminders'
+import { useInstall } from '../lib/install'
 import { deName } from '../lib/phrases'
 import { QuickCapture } from './QuickCapture'
 import { SearchPalette } from './SearchPalette'
@@ -29,6 +30,7 @@ const NAV = [
 export function Layout() {
   const settings = useSettings()
   const { toast } = useUI()
+  const { canInstall, install } = useInstall()
   const [capture, setCapture] = useState(false)
   const [search, setSearch] = useState(false)
   const [mobileNav, setMobileNav] = useState(false)
@@ -89,6 +91,15 @@ export function Layout() {
         </nav>
 
         <div className="side-bottom">
+          {canInstall && (
+            <button className="side-install" onClick={install}>
+              <Mascot size={26} />
+              <span>
+                <b>Installer Minion</b>
+                <small>sur cet ordinateur, en 1 clic</small>
+              </span>
+            </button>
+          )}
           <NavLink to="/reglages" className="side-link">
             <Icon name="settings" size={18} />
             <span>Réglages</span>
