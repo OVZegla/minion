@@ -34,6 +34,7 @@ export default defineConfig({
     }),
   ],
   base: './',
-  server: { port: 5173, open: false },
+  // la surveillance par sondage évite les modifications manquées sous Windows
+  server: { port: 5173, open: false, watch: { usePolling: true, interval: 250 } },
   preview: { port: 4173 },
 })

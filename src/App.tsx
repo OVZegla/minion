@@ -23,6 +23,8 @@ import { TreasurePage } from './features/treasure/TreasurePage'
 import { SettingsPage } from './features/settings/SettingsPage'
 import { SongsPage } from './features/synth/SongsPage'
 import { SongEditorPage } from './features/synth/SongEditor'
+import { LearnPage } from './features/learn/LearnPage'
+import { DeckPage } from './features/learn/DeckPage'
 
 const router = createHashRouter([
   {
@@ -46,6 +48,8 @@ const router = createHashRouter([
       { path: 'bonheurs', element: <TreasurePage /> },
       { path: 'synthe', element: <SongsPage /> },
       { path: 'synthe/:id', element: <SongEditorPage /> },
+      { path: 'apprendre', element: <LearnPage /> },
+      { path: 'apprendre/:id', element: <DeckPage /> },
       { path: 'reglages', element: <SettingsPage /> },
       { path: '*', element: <ErrorPage /> },
     ],

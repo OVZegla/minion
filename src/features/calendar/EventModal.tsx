@@ -203,7 +203,12 @@ export function EventModal({
             )}
           </div>
           <div style={{ marginTop: 18 }}>
-            <LinkedItems type="event" id={d.id} title="Contenus associés" />
+            <LinkedItems type="event" id={d.id} title={d.kind === 'synthe' ? 'Morceau à travailler et contenus associés' : 'Contenus associés'} />
+            {d.kind === 'synthe' && (
+              <p className="faint" style={{ fontSize: '0.78rem', marginTop: 4 }}>
+                Relie un morceau de l’atelier synthé : il s’ouvrira d’un clic depuis cette séance.
+              </p>
+            )}
           </div>
         </>
       )}
