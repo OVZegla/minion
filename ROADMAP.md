@@ -17,19 +17,23 @@ Une case n'est cochée que si la fonction est utilisable **et** sauvegardée. Vo
 - [x] Calendrier : jour / semaine / mois, événements ponctuels et récurrents, types et couleurs, rappels (quand l'app est ouverte), déplacement à la souris, redimensionnement, « reporter à demain », « retirer cette fois », tâches avec ou sans date, tâches restées en chemin
 - [x] Journal : privé, chronologie + calendrier, humeur facultative, questions facultatives, moments marquants, fiertés, photos, musique/lien, impression
 - [x] Pensées à plat : dépôt libre, couleurs, regroupement, transformation en note / tâche / envie / projet, association à une envie
-- [x] Mon trésor : phrases, souvenirs, victoires, images, bienfaits ; tirage au hasard
+- [x] Mes petits bonheurs (onglet de Pensées à plat) : phrases, souvenirs, victoires, images, bienfaits ; explication claire ; tirage au hasard ; ses phrases rejoignent l’ouverture
 - [x] Liens entre tous les contenus (table unique, sans copie)
 - [x] Réglages : prénom, apparence, ouverture, catégories, types d'événements, sauvegarde / restauration dans un fichier, espace utilisé
-- [ ] PWA installable (icône bureau, hors ligne) — préparé, pas encore activé
+- [x] Couleur du texte dans l’éditeur (10 couleurs) — notes, journal, fiches
+- [x] Application installable depuis le navigateur (icône, fenêtre à part, hors ligne) — testée en local
+- [ ] Hébergement pour l’installer chez Einat (à décider : Netlify, GitHub Pages…)
 - [ ] Partage explicite d'une page de journal (volontairement absent : privé par défaut)
 
 ## Étape 2 — Musique et apprentissage
-- [ ] Atelier synthé : éditeur (tempo, mesure, notes, durées, silences, accords, mains, doigtés, sections), clavier visuel, grille temporelle
-- [ ] Présentations : grille de notes, repères clavier, portée, piano roll
-- [ ] Lecture synchronisée, métronome, boucle, départ à une mesure, tempo de pratique, préécoute
-- [ ] Export PDF du morceau
-- [ ] Séances de synthé du calendrier → ouvrent un morceau
-- [ ] Apprendre : fiches, cartes question/réponse, quiz, séances de révision à partir des notes
+- [x] Atelier synthé : titre, tempo, mesure, notes et octaves, durées (pointées), silences, accords (notes empilées + accords chiffrés), mesures, mains droite/gauche, doigtés, annotations, sections
+- [x] Saisie : clavier visuel, clavier d’ordinateur (adapté AZERTY/QWERTY), piano roll (ajout, déplacement, durée, sélection, copier/coller, dupliquer, transposer), opérations sur les mesures, annuler/rétablir
+- [x] Présentations : piano roll, grille de notes, repères sur clavier, partition sur portée (clés de sol et fa, liaisons, silences, altérations)
+- [x] Lecture : lecture/pause, curseur synchronisé, notes mises en évidence, métronome, décompte, boucle, départ à une mesure, tempo de pratique séparé, couper une main, préécoute (son de synthé simple)
+- [x] Impression / PDF : choix du format, taille, mesures par ligne, doigtés, annotations, sauts de page
+- [x] Reprendre un morceau depuis l’accueil ; séance de synthé du calendrier reliée à un morceau
+- [x] Apprendre : séries reliées à des notes, cartes écrites ou proposées (règles simples, sans IA, passage source, « à vérifier »), fiche synthétique, révision espacée, quiz, texte à trous, à approfondir, informations manquantes signalées
+- [ ] Reconnaissance d’un fichier audio (évolution séparée, jamais parfaite)
 
 ## Étape 3 — Création graphique
 - [ ] Atelier plume (jeu inspiré du Bézier Game, logique et raccourcis de la plume Photoshop)

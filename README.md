@@ -13,6 +13,8 @@ npm install
 npm run dev
 ```
 
+Version installable (comme une vraie application, hors ligne) : double-clic sur **`Installer Minion (app).bat`**, puis dans Edge : menu … → Applications → Installer Minion. Attention : cette version (port 4173) et la version de test (port 5173) ont chacune leurs propres données.
+
 Astuce de développement : `http://localhost:5173/?nosplash` saute l'animation d'ouverture.
 
 ## Données
