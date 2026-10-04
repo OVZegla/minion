@@ -249,3 +249,11 @@ button.chip { cursor: pointer; }
 .linked-type { font-size: 0.75rem; }
 .seg a { display: inline-block; padding: 6px 14px; border-radius: 999px; font-size: 0.86rem; color: var(--ink-soft); text-decoration: none; transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease); }
 .seg a.on { background: var(--surface); color: var(--ink); box-shadow: var(--shadow-sm); }
+/* indices clavier inutiles sur écran tactile */
+@media (hover: none) { .desktop-only { display: none !important; } }
+/* iPhone : Safari zoome sur les champs dont le texte fait moins de 16 px */
+html { -webkit-text-size-adjust: 100%; }
+@media (hover: none) and (pointer: coarse) {
+  .input, .textarea, .select, .tag-input input, .task-add input, .task-edit, .lib-search input, .search-input-row input,
+  .note-select, .flash-q, .flash-a, .pp-hex, .se-field input, .se-field select, .prose { font-size: 16px !important; }
+}

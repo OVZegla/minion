@@ -48,3 +48,11 @@ export function useInstall() {
     },
   }
 }
+
+/** iPhone / iPad : Minion s'utilise directement dans Safari (pas d'installation proposée). */
+export function isIOS() {
+  if (typeof navigator === 'undefined') return false
+  if (location.search.includes('ios')) return true // pour tester sur ordinateur
+  const ua = navigator.userAgent
+  return /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+}

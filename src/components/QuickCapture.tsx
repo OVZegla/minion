@@ -47,7 +47,7 @@ export function QuickCapture({ open, onClose, initialDest = 'note' }: { open: bo
       title="Noter quelque chose"
       footer={
         <>
-          <span className="faint" style={{ fontSize: '0.8rem', marginRight: 'auto', alignSelf: 'center' }}>
+          <span className="faint desktop-only" style={{ fontSize: '0.8rem', marginRight: 'auto', alignSelf: 'center' }}>
             Ctrl + Entrée pour enregistrer
           </span>
           <button className="btn ghost" onClick={onClose}>

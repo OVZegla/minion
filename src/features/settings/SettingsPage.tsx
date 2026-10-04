@@ -6,6 +6,7 @@ import { Icon } from '../../components/Icon'
 import { Splash } from '../../components/Splash'
 import { useUI } from '../../components/ui'
 import { relative } from '../../lib/dates'
+import { isInstalled, isIOS, useInstall } from '../../lib/install'
 import './settings.css'
 
 const ACCENTS = [
@@ -125,6 +126,8 @@ export function SettingsPage() {
         </div>
       </section>
 
+      <InstallSection />
+
       <section className="card pad set-section">
         <h3>Tes données</h3>
         <p className="muted" style={{ margin: '8px 0 14px', fontSize: '0.92rem' }}>
@@ -180,5 +183,29 @@ export function SettingsPage() {
 
       {preview && <Splash name={s.name} onDone={() => setPreview(false)} />}
     </div>
+  )
+}
+
+function InstallSection() {
+  const { canInstall, install } = useInstall()
+  return (
+    <section className="card pad set-section">
+      <h3>Installer Minion</h3>
+      {isInstalled() ? (
+        <p className="muted" style={{ marginTop: 8 }}>Minion est installé sur cet appareil. Les mises à jour arrivent toutes seules.</p>
+      ) : isIOS() ? (
+        <p className="muted" style={{ marginTop: 8 }}>Sur iPhone, Minion s’utilise directement dans Safari : rien à installer.</p>
+      ) : canInstall ? (
+        <div className="row" style={{ marginTop: 10 }}>
+          <p className="muted" style={{ flex: 1 }}>Une icône sur le bureau, une fenêtre à part, et ça marche même sans internet.</p>
+          <button className="btn primary" onClick={install}>Installer sur cet ordinateur</button>
+        </div>
+      ) : (
+        <p className="muted" style={{ marginTop: 8, fontSize: '0.92rem' }}>
+          Ouvre Minion dans Edge ou Chrome sur ordinateur pour l’installer en un clic, Sur iPhone, il s’utilise directement dans Safari.
+        </p>
+      )}
+      <p className="faint" style={{ fontSize: '0.8rem', marginTop: 10 }}>Chaque appareil garde ses propres données : utilise la sauvegarde ci-dessous pour les transférer.</p>
+    </section>
   )
 }

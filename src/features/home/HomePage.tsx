@@ -213,7 +213,7 @@ function CaptureBlock() {
         }}
       />
       <div className="row" style={{ marginTop: 10 }}>
-        <span className="faint" style={{ fontSize: '0.78rem' }}>
+        <span className="faint desktop-only" style={{ fontSize: '0.78rem' }}>
           Ctrl + Entrée
         </span>
         <span className="spacer" />
@@ -279,7 +279,7 @@ function WishBlock() {
           <div className="hand" style={{ fontSize: '1.1rem' }}>
             {wish.emoji} {wish.category}
           </div>
-          <div className="home-wish-title">{wish.title}</div>
+          <div className="home-wish-title">{wish.title || 'Une envie sans nom'}</div>
           <span className="chip neutral">{WISH_STATES[wish.state].label}</span>
         </div>
       )}
@@ -305,7 +305,7 @@ function JournalBlock() {
   return (
     <Panel title="Journal" icon="feather" to="/journal">
       <p className="muted" style={{ marginBottom: 14 }}>
-        {entry?.text ? `« ${entry.text.slice(0, 110)}${entry.text.length > 110 ? '…' : ''} »` : 'Qu’as-tu envie de garder de cette journée ?'}
+        {entry?.text.trim() ? `« ${entry.text.trim().slice(0, 110)}${entry.text.trim().length > 110 ? '…' : ''} »` : 'Qu’as-tu envie de garder de cette journée ?'}
       </p>
       <button className="btn sm" onClick={open}>
         <Icon name="feather" size={15} /> {entry ? 'Continuer la page du jour' : 'Écrire la page du jour'}
@@ -418,7 +418,8 @@ function InstallBanner() {
       return false
     }
   })
-  if (!canInstall || hidden) return null
+  if (hidden) return null
+  if (!canInstall) return null
   return (
     <div className="card install-banner">
       <Mascot size={52} />
@@ -447,3 +448,4 @@ function InstallBanner() {
     </div>
   )
 }
+

@@ -45,3 +45,6 @@
 .task-done-toggle { display: flex; align-items: center; gap: 6px; border: none; background: none; color: var(--ink-faint); font-size: 0.8rem; padding: 8px 6px 4px; cursor: pointer; }
 
 @media (hover: none) { .task-actions { opacity: 1; } }
+.task-add input:not(.task-date-input) { min-width: 0; }
+.task-date-input { min-width: 0; max-width: 140px; }
+@media (max-width: 760px) { .task-date-input { max-width: 120px; } }
