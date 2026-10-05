@@ -18,6 +18,7 @@ import type {
   Deck,
 } from './types'
 import type { GraphicDoc } from '../features/studio/types'
+import type { RoomPlan } from '../features/rooms/types'
 
 class MinionDB extends Dexie {
   notes!: Table<Note, string>
@@ -38,6 +39,7 @@ class MinionDB extends Dexie {
   decks!: Table<Deck, string>
   kv!: Table<{ id: string; value: unknown }, string>
   graphics!: Table<GraphicDoc, string>
+  plans!: Table<RoomPlan, string>
 
   constructor() {
     super('minion')
@@ -66,6 +68,8 @@ class MinionDB extends Dexie {
     this.version(3).stores({ kv: 'id' })
     // v4 : studio graphique
     this.version(4).stores({ graphics: 'id, updatedAt, openedAt' })
+    // v5 : pièces et maisons
+    this.version(5).stores({ plans: 'id, updatedAt, openedAt' })
   }
 }
 

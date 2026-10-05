@@ -27,10 +27,11 @@ const NAV = [
   { to: '/apprendre', icon: 'target', label: 'Apprendre' },
   { to: '/plume', icon: 'pen', label: 'Atelier plume' },
   { to: '/studio', icon: 'palette', label: 'Studio graphique' },
+  { to: '/pieces', icon: 'home', label: 'Pièces et maisons' },
 ]
 
 /** Espaces de travail plein écran (sans le menu de Minion). */
-const IMMERSIVE = /^\/(plume\/[^/]+|studio\/[^/]+)/
+const IMMERSIVE = /^\/(plume\/[^/]+|studio\/[^/]+|pieces\/[^/]+)/
 
 export function Layout() {
   const settings = useSettings()

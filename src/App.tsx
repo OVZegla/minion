@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { createHashRouter, RouterProvider } from 'react-router-dom'
 import { db, requestPersistence } from './db/db'
 import { applyTheme, getSettings, useSettings } from './db/settings'
@@ -29,6 +29,11 @@ import { PenHomePage, PenLevelPage } from './features/pen/PenGamePage'
 import { StudioHome } from './features/studio/StudioHome'
 import { StudioPage } from './features/studio/Studio'
 
+// la 3D (three.js) n'est chargée qu'en ouvrant un plan
+const RoomsHome = lazy(() => import('./features/rooms/RoomsHome').then((m) => ({ default: m.RoomsHome })))
+const RoomPage = lazy(() => import('./features/rooms/RoomPage').then((m) => ({ default: m.RoomPage })))
+const wait = <div className="page empty">Ouverture…</div>
+
 const router = createHashRouter([
   {
     path: '/',
@@ -54,6 +59,8 @@ const router = createHashRouter([
       { path: 'apprendre', element: <LearnPage /> },
       { path: 'plume', element: <PenHomePage /> },
       { path: 'studio', element: <StudioHome /> },
+      { path: 'pieces', element: <Suspense fallback={wait}><RoomsHome /></Suspense> },
+      { path: 'pieces/:id', element: <Suspense fallback={wait}><RoomPage /></Suspense> },
       { path: 'studio/:id', element: <StudioPage /> },
       { path: 'plume/:levelId', element: <PenLevelPage /> },
       { path: 'apprendre/:id', element: <DeckPage /> },

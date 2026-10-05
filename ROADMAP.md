@@ -47,8 +47,12 @@ Une case n'est cochée que si la fonction est utilisable **et** sauvegardée. Vo
 - [ ] Non prévu pour l’instant : PSD, calques de réglage, styles de calque, retouche (tampon, correcteur), IA générative, pression du stylet
 
 ## Étape 4 — Aménagement
-- [ ] Plans 2D (grille, accrochage, cotations, murs, portes, fenêtres, meubles)
-- [ ] Vue 3D / isométrique issue du plan, éclairages, exports
+- [x] Pièces de départ (chambre, salon, petit appartement) ou plan vide
+- [x] Plan 2D : grille, accrochage (grille, extrémités, angles), cotations automatiques, outils Pièce / Mur / Porte / Fenêtre / Lumière, surfaces des pièces
+- [x] 25 meubles et objets, déplacement, rotation (poignée, R), dimensions, couleurs, duplication ; matériaux de sol (parquets, point de Hongrie, carrelage, tomettes, béton ciré, moquette) ; couleurs des murs
+- [x] Vue 3D générée depuis le plan : isométrique cadrée automatiquement (rotation par quarts de tour), vue libre, murs coupés, ambiance jour / soir, soleil et lampes réglables, ombres
+- [x] Variantes enregistrées, export PNG du plan et de la 3D, plan PDF avec mention « non validé pour construire »
+- [ ] Plus tard : escaliers, étages, meubles importés, image d’ambiance générée (sera identifiée comme telle)
 
 ## Plus tard
 - [ ] Boîte Loïc (non développée, place réservée)
