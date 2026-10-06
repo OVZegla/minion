@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../db/db'
@@ -45,6 +45,19 @@ export function Layout() {
   const inboxCount = useLiveQuery(() => db.notes.filter((n) => n.inbox && !n.trashedAt).count(), []) ?? 0
 
   useEffect(() => setMobileNav(false), [loc.pathname])
+
+  // repère qui glisse sous l'entrée active du menu
+  const navRef = useRef<HTMLElement>(null)
+  const [pill, setPill] = useState<{ top: number; height: number; ready: boolean } | null>(null)
+  useLayoutEffect(() => {
+    const place = () => {
+      const el = navRef.current?.querySelector<HTMLElement>('.side-link.active')
+      setPill((p) => (el ? { top: el.offsetTop, height: el.offsetHeight, ready: !!p } : null))
+    }
+    place()
+    window.addEventListener('resize', place)
+    return () => window.removeEventListener('resize', place)
+  }, [loc.pathname])
   useReminders(toast)
 
   useEffect(() => {
@@ -83,14 +96,15 @@ export function Layout() {
           <span>Noter une idée</span>
         </button>
 
-        <nav className="side-nav">
-          {NAV.map((n) => (
+        <nav className="side-nav" ref={navRef}>
+          {pill && <span className={`side-pill ${pill.ready ? 'ready' : ''}`} style={{ transform: `translateY(${pill.top}px)`, height: pill.height }} aria-hidden />}
+          {NAV.map((n, i) => (
             <Fragment key={n.to}>
             {'group' in n && n.group && <div className="side-group">{n.group}</div>}
-            <NavLink to={n.to} end={n.end} className={({ isActive }) => `side-link ${isActive || (n.to === "/pensees" && loc.pathname === "/bonheurs") ? "active" : ""}`}>
+            <NavLink to={n.to} end={n.end} style={{ ['--i' as string]: i }} className={({ isActive }) => `side-link ${isActive || (n.to === "/pensees" && loc.pathname === "/bonheurs") ? "active" : ""}`}>
               <Icon name={n.icon} size={18} />
               <span>{n.label}</span>
-              {n.badge === 'inbox' && inboxCount > 0 && <span className="side-badge">{inboxCount}</span>}
+              {n.badge === 'inbox' && inboxCount > 0 && <span key={inboxCount} className="side-badge">{inboxCount}</span>}
             </NavLink>
             </Fragment>
           ))}

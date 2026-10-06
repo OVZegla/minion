@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type PointerEvent as RPointerEvent } from 'react'
 import { uid } from '../../db/db'
-import { CATALOG, MATERIALS, catalogItem } from './catalog'
+import { CATALOG, MATERIALS, catalogItem, modelOf } from './catalog'
 import {
   cm,
   dist,
@@ -79,6 +79,14 @@ export function PlanEditor({ data, onChange, tool, setTool, placing, sel, setSel
   }
   useEffect(fit, [fitSignal, size.w, size.h]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  const placeFurniture = (type: string, at: Pt) => {
+    const c = catalogItem(type)
+    if (!c) return
+    const f: Furniture = { id: uid(), type: c.id, x: snapGrid(at.x, 5), y: snapGrid(at.y, 5), w: c.w, d: c.d, h: c.h, rotation: 0, color: c.color }
+    onChange({ ...data, furniture: [...data.furniture, f] }, true)
+    setSel({ kind: 'furniture', id: f.id })
+    setTool('select')
+  }
   const toWorld = (e: { clientX: number; clientY: number }): Pt => {
     const r = svg.current!.getBoundingClientRect()
     return { x: view.x + (e.clientX - r.left) / view.scale, y: view.y + (e.clientY - r.top) / view.scale }
@@ -236,12 +244,7 @@ export function PlanEditor({ data, onChange, tool, setTool, placing, sel, setSel
       return
     }
     if (tool === 'furniture' && placing) {
-      const c = catalogItem(placing)
-      if (!c) return
-      const f: Furniture = { id: uid(), type: c.id, x: snapGrid(raw.x, 5), y: snapGrid(raw.y, 5), w: c.w, d: c.d, h: c.h, rotation: 0, color: c.color }
-      onChange({ ...data, furniture: [...data.furniture, f] }, true)
-      setSel({ kind: 'furniture', id: f.id })
-      setTool('select')
+      placeFurniture(placing, raw)
       return
     }
     if (tool === 'light') {
@@ -412,6 +415,19 @@ export function PlanEditor({ data, onChange, tool, setTool, placing, sel, setSel
       onPointerUp={onUp}
       onDoubleClick={() => chain.length && finishChain()}
       onContextMenu={(e) => e.preventDefault()}
+      onDragOver={(e) => {
+        if (e.dataTransfer.types.includes('text/minion-furniture')) {
+          e.preventDefault()
+          e.dataTransfer.dropEffect = 'copy'
+          setHover(toWorld(e))
+        }
+      }}
+      onDrop={(e) => {
+        const type = e.dataTransfer.getData('text/minion-furniture')
+        if (!type) return
+        e.preventDefault()
+        placeFurniture(type, toWorld(e))
+      }}
     >
       <defs>
         <pattern id="pg-minor" width={grid} height={grid} patternUnits="userSpaceOnUse">
@@ -585,14 +601,18 @@ function WallShape({ w, openings, selected, selOpening, px }: { w: Wall; opening
 
 function FurnitureTop({ f, selected, px }: { f: Furniture; selected: boolean; px: (n: number) => number }) {
   const { w, d } = f
+  const item = catalogItem(f.type)
+  const model = modelOf(f.type)
+  const round = !!item?.round
+  const flat = model === 'rug' || model === 'roundrug' || model === 'path' || model === 'pool'
   const detail = (() => {
-    switch (f.type) {
+    if (round && !['plant', 'lamp'].includes(model)) return null
+    switch (model) {
       case 'bed':
-      case 'bedsingle':
         return (
           <>
-            <rect x={-w / 2 + 6} y={-d / 2 + 8} width={f.type === 'bed' ? w / 2 - 10 : w - 12} height={30} rx={6} className="ft-soft" />
-            {f.type === 'bed' && <rect x={4} y={-d / 2 + 8} width={w / 2 - 10} height={30} rx={6} className="ft-soft" />}
+            <rect x={-w / 2 + 6} y={-d / 2 + 8} width={w > 130 ? w / 2 - 10 : w - 12} height={30} rx={6} className="ft-soft" />
+            {w > 130 && <rect x={4} y={-d / 2 + 8} width={w / 2 - 10} height={30} rx={6} className="ft-soft" />}
             <rect x={-w / 2} y={-d / 2 + 50} width={w} height={d - 50} rx={4} className="ft-cover" />
           </>
         )
@@ -606,8 +626,6 @@ function FurnitureTop({ f, selected, px }: { f: Furniture; selected: boolean; px
           </>
         )
       case 'table':
-      case 'coffee':
-      case 'desk':
         return <rect x={-w / 2 + 4} y={-d / 2 + 4} width={w - 8} height={d - 8} rx={3} className="ft-line" />
       case 'chair':
       case 'officechair':
@@ -624,6 +642,8 @@ function FurnitureTop({ f, selected, px }: { f: Furniture; selected: boolean; px
         return <ellipse cx={0} cy={d / 6} rx={w / 2.4} ry={d / 3} className="ft-line" />
       case 'shower':
         return <path d={`M ${-w / 2} ${-d / 2} L ${w / 2} ${d / 2} M ${w / 2} ${-d / 2} L ${-w / 2} ${d / 2}`} className="ft-line" />
+      case 'pool':
+        return <rect x={-w / 2 + 6} y={-d / 2 + 6} width={w - 12} height={d - 12} rx={8} className="ft-water" />
       case 'piano':
         return <rect x={-w / 2 + 4} y={0} width={w - 8} height={d / 2 - 4} className="ft-keys" />
       default:
@@ -633,10 +653,15 @@ function FurnitureTop({ f, selected, px }: { f: Furniture; selected: boolean; px
   const rot = rotHandle(f)
   return (
     <g>
-      <g transform={`translate(${f.x} ${f.y}) rotate(${f.rotation})`} className={`plan-furn ${selected ? 'sel' : ''} ${f.type === 'rug' ? 'rug' : ''}`}>
-        <rect x={-w / 2} y={-d / 2} width={w} height={d} rx={f.type === 'rug' ? 2 : 5} fill={f.color} strokeWidth={px(selected ? 2 : 1)} />
+      <g transform={`translate(${f.x} ${f.y}) rotate(${f.rotation})`} className={`plan-furn ${selected ? 'sel' : ''} ${flat ? 'rug' : ''}`}>
+        {round ? <ellipse rx={w / 2} ry={d / 2} fill={f.color} strokeWidth={px(selected ? 2 : 1)} /> : <rect x={-w / 2} y={-d / 2} width={w} height={d} rx={flat ? 2 : 5} fill={f.color} strokeWidth={px(selected ? 2 : 1)} />}
         {detail}
-        <text y={px(4)} fontSize={px(10)} textAnchor="middle" className="plan-furn-label" transform={`rotate(${-f.rotation})`}>
+        {item && Math.min(w, d) >= 20 && (
+          <text y={Math.min(w, d) * 0.12} fontSize={Math.min(w, d, 70) * 0.5} textAnchor="middle" className="plan-furn-emoji" transform={`rotate(${-f.rotation})`}>
+            {item.emoji}
+          </text>
+        )}
+        <text y={Math.min(w, d) >= 20 ? Math.min(w, d) * 0.12 + px(12) : px(4)} fontSize={px(10)} textAnchor="middle" className="plan-furn-label" transform={`rotate(${-f.rotation})`}>
           {f.label || catalogItem(f.type)?.name}
         </text>
       </g>

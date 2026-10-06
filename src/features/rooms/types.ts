@@ -78,6 +78,6 @@ export interface RoomPlan {
   title: string
   data: PlanData
   variants: Variant[]
-  ambience: { sun: number; warm: number; time: 'jour' | 'soir' }
+  ambience: { sun: number; warm: number; time: 'jour' | 'doree' | 'soir' }
   openedAt?: number
 }

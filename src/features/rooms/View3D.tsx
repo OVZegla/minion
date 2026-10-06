@@ -1,7 +1,7 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import { addLights, buildPlanGroup } from './scene3d'
+import { AMBIENCES, addLights, buildPlanGroup, disposeScene, skyTexture, softGround, type LightRig, type Quality } from './scene3d'
 import type { PlanData, RoomPlan } from './types'
 
 export interface View3DHandle {
@@ -15,10 +15,11 @@ interface Props {
   ambience: RoomPlan['ambience']
   mode: 'iso' | 'free'
   cutWalls: boolean
+  quality: Quality
 }
 
 /** Vue 3D générée depuis le plan (isométrique ou libre). */
-export const View3D = forwardRef<View3DHandle, Props>(function View3D({ data, ambience, mode, cutWalls }, ref) {
+export const View3D = forwardRef<View3DHandle, Props>(function View3D({ data, ambience, mode, cutWalls, quality }, ref) {
   const host = useRef<HTMLDivElement>(null)
   const st = useRef<{
     renderer: THREE.WebGLRenderer
@@ -30,24 +31,33 @@ export const View3D = forwardRef<View3DHandle, Props>(function View3D({ data, am
     center: THREE.Vector3
     size: number
     raf: number
+    dirty: boolean
+    rig: LightRig | null
+    lastAnim: number
+    shadowFrames: number
   } | null>(null)
 
   /* ---------- initialisation ---------- */
   useEffect(() => {
     const el = host.current!
-    const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true })
-    renderer.setPixelRatio(Math.min(2, window.devicePixelRatio))
-    renderer.shadowMap.enabled = true
+    const belle = quality === 'belle'
+    const renderer = new THREE.WebGLRenderer({ antialias: belle, preserveDrawingBuffer: true, powerPreference: belle ? 'high-performance' : 'low-power' })
+    // en mode éco on dessine moins de pixels : c'est ce qui coûte le plus sur un petit PC
+    renderer.setPixelRatio(belle ? Math.min(1.75, window.devicePixelRatio) : Math.min(1, window.devicePixelRatio))
+    renderer.shadowMap.enabled = belle
     renderer.shadowMap.type = THREE.PCFSoftShadowMap
+    renderer.shadowMap.autoUpdate = false
+    renderer.setClearColor('#f3ede4')
     renderer.outputColorSpace = THREE.SRGBColorSpace
-    renderer.toneMapping = THREE.ACESFilmicToneMapping
+    renderer.toneMapping = THREE.NeutralToneMapping
     renderer.toneMappingExposure = 1.05
     el.appendChild(renderer.domElement)
     const scene = new THREE.Scene()
     const camera = new THREE.PerspectiveCamera(45, 1, 0.05, 200)
     const controls = new OrbitControls(camera, renderer.domElement)
     controls.enableDamping = true
-    st.current = { renderer, scene, camera, controls, content: null, isoAngle: Math.PI / 4, center: new THREE.Vector3(), size: 5, raf: 0 }
+    st.current = { renderer, scene, camera, controls, content: null, isoAngle: Math.PI / 4, center: new THREE.Vector3(), size: 5, raf: 0, dirty: true, rig: null, lastAnim: 0, shadowFrames: 0 }
+    controls.addEventListener('change', () => st.current && (st.current.dirty = true))
     const resize = () => {
       const w = el.clientWidth
       const h = el.clientHeight
@@ -57,21 +67,38 @@ export const View3D = forwardRef<View3DHandle, Props>(function View3D({ data, am
         s.camera.aspect = w / h
         s.camera.updateProjectionMatrix()
       } else if (s.camera instanceof THREE.OrthographicCamera) frameIso(false)
+      s.dirty = true
     }
+    const s0 = () => (st.current!.raf = requestAnimationFrame(loop))
     const ro = new ResizeObserver(resize)
     ro.observe(el)
-    const loop = () => {
+    // on ne redessine que si quelque chose a bougé : la carte graphique se repose le reste du temps
+    const loop = (now: number) => {
       const s = st.current!
       s.controls.update()
-      s.renderer.render(s.scene, s.camera)
+      if (s.rig?.animated && now - s.lastAnim > 50) {
+        s.rig.tick(now / 1000)
+        s.lastAnim = now
+        s.dirty = true
+      }
+      if (s.shadowFrames > 0) {
+        s.renderer.shadowMap.needsUpdate = true
+        s.shadowFrames--
+        s.dirty = true
+      }
+      if (s.dirty) {
+        s.renderer.render(s.scene, s.camera)
+        s.dirty = false
+      }
       s.raf = requestAnimationFrame(loop)
     }
-    loop()
+    s0()
     resize()
     return () => {
       ro.disconnect()
       cancelAnimationFrame(st.current!.raf)
       controls.dispose()
+      disposeScene(scene)
       renderer.dispose()
       el.removeChild(renderer.domElement)
       st.current = null
@@ -126,6 +153,7 @@ export const View3D = forwardRef<View3DHandle, Props>(function View3D({ data, am
     s.controls.enableRotate = false
     s.controls.screenSpacePanning = true
     s.controls.update()
+    s.dirty = true
   }
 
   const frameFree = () => {
@@ -140,6 +168,7 @@ export const View3D = forwardRef<View3DHandle, Props>(function View3D({ data, am
     s.controls.enableRotate = true
     s.controls.maxPolarAngle = Math.PI / 2 - 0.02
     s.controls.update()
+    s.dirty = true
   }
 
   /* ---------- reconstruction de la scène quand le plan change ---------- */
@@ -147,24 +176,24 @@ export const View3D = forwardRef<View3DHandle, Props>(function View3D({ data, am
     const s = st.current
     if (!s) return
     const t = window.setTimeout(() => {
+      disposeScene(s.scene)
       s.scene.clear()
-      s.scene.background = new THREE.Color(ambience.time === 'soir' ? '#4a3f4c' : '#f3ede4')
-      const content = buildPlanGroup(data, { cutWalls: cutWalls ? 110 : null })
-      s.content = content
-      s.scene.add(content)
-      const box = new THREE.Box3().setFromObject(content)
+      const time = (ambience.time in AMBIENCES ? ambience.time : 'jour') as keyof typeof AMBIENCES
+      s.scene.background = skyTexture(time)
+      s.renderer.toneMappingExposure = AMBIENCES[time].exposure
+      const { root, emitters } = buildPlanGroup(data, { cutWalls: cutWalls ? 110 : null, quality })
+      s.content = root
+      s.scene.add(root)
+      const box = new THREE.Box3().setFromObject(root)
       const empty = box.isEmpty()
       s.center = empty ? new THREE.Vector3() : box.getCenter(new THREE.Vector3())
       s.center.y = 0.6
       s.size = empty ? 5 : Math.max(box.max.x - box.min.x, box.max.z - box.min.z, 3)
-      // sol extérieur doux qui reçoit les ombres
-      const ground = new THREE.Mesh(new THREE.CircleGeometry(s.size * 2, 48), new THREE.MeshStandardMaterial({ color: ambience.time === 'soir' ? '#5a4d58' : '#ebe3d6', roughness: 1 }))
-      ground.rotation.x = -Math.PI / 2
-      ground.position.set(s.center.x, -0.002, s.center.z)
-      ground.receiveShadow = true
-      s.scene.add(ground)
-      addLights(s.scene, data, ambience, new THREE.Vector3(s.center.x, 0, s.center.z), s.size)
+      s.scene.add(softGround(time, s.center, s.size))
+      s.rig = addLights(s.scene, emitters, ambience, new THREE.Vector3(s.center.x, 0, s.center.z), s.size, quality)
       if (mode === 'iso') frameIso(false)
+      s.shadowFrames = 2 // les ombres ne sont recalculées que quand la scène change
+      s.dirty = true
     }, 120)
     return () => window.clearTimeout(t)
   }, [data, ambience, cutWalls]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -178,6 +207,7 @@ export const View3D = forwardRef<View3DHandle, Props>(function View3D({ data, am
     exportPng: () => {
       const s = st.current
       if (!s) return null
+      s.renderer.shadowMap.needsUpdate = true
       s.renderer.render(s.scene, s.camera)
       return s.renderer.domElement.toDataURL('image/png')
     },

@@ -4,7 +4,8 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { db, uid } from '../../db/db'
 import { Icon } from '../../components/Icon'
 import { Menu, Modal, SaveStatus, useAutosave, useUI } from '../../components/ui'
-import { CATALOG, FURNITURE_COLORS, MATERIALS, WALL_COLORS, catalogItem } from './catalog'
+import { CATALOG, CATEGORIES, CATEGORY_EMOJI, FURNITURE_COLORS, MATERIALS, WALL_COLORS, catalogItem, type Category } from './catalog'
+import type { Quality } from './scene3d'
 import { cm, planBounds, polygonArea, wallLength } from './geometry'
 import { PlanEditor, type PlanTool, type Sel } from './PlanEditor'
 import { View3D, type View3DHandle } from './View3D'
@@ -25,6 +26,21 @@ export function RoomPage() {
 }
 
 type ViewMode = 'plan' | 'iso' | 'free' | 'split'
+
+/** Qualité 3D : « éco » par défaut sur les petites machines, mémorisée ensuite. */
+function initialQuality(): Quality {
+  try {
+    const q = localStorage.getItem('minion-3d-quality')
+    if (q === 'eco' || q === 'belle') return q
+  } catch {
+    /* stockage indisponible */
+  }
+  const nav = navigator as Navigator & { deviceMemory?: number }
+  const weak = (nav.hardwareConcurrency ?? 4) <= 4 || (nav.deviceMemory ?? 8) <= 4
+  return weak ? 'eco' : 'belle'
+}
+
+const norm = (t: string) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
 const TOOLS: { id: PlanTool; label: string; icon: string; hint: string }[] = [
   { id: 'select', label: 'Sélection', icon: 'direct', hint: 'Clic : choisir · glisser : déplacer · R : pivoter de 90° · Suppr : retirer' },
   { id: 'room', label: 'Pièce', icon: 'square', hint: 'Glisse pour tracer une pièce rectangulaire (murs + sol)' },
@@ -46,6 +62,17 @@ function RoomEditor({ initial }: { initial: RoomPlan }) {
   const [cut, setCut] = useState(true)
   const [fitSignal, setFitSignal] = useState(0)
   const [libOpen, setLibOpen] = useState(true)
+  const [cat, setCat] = useState<Category>('Salon')
+  const [query, setQuery] = useState('')
+  const [quality, setQualityState] = useState<Quality>(initialQuality)
+  const setQuality = (q: Quality) => {
+    setQualityState(q)
+    try {
+      localStorage.setItem('minion-3d-quality', q)
+    } catch {
+      /* stockage indisponible */
+    }
+  }
   const [variantName, setVariantName] = useState<string | null>(null)
   const three = useRef<View3DHandle>(null)
   const past = useRef<PlanData[]>([])
@@ -232,19 +259,36 @@ function RoomEditor({ initial }: { initial: RoomPlan }) {
             </button>
             {libOpen && (
               <div className="room-catalog">
-                {(['Salon', 'Chambre', 'Cuisine', 'Salle de bain', 'Bureau', 'Déco'] as const).map((cat) => (
-                  <div key={cat}>
-                    <div className="eyebrow room-cat">{cat}</div>
-                    <div className="room-items">
-                      {CATALOG.filter((c) => c.category === cat).map((c) => (
-                        <button key={c.id} className={`room-item ${placing === c.id && tool === 'furniture' ? 'on' : ''}`} onClick={() => { setPlacing(c.id); setTool('furniture') }} title={`${c.name} · ${c.w} × ${c.d} cm`}>
-                          <span className="room-item-swatch" style={{ background: c.color, aspectRatio: `${c.w} / ${c.d}` }} />
-                          <span>{c.name}</span>
-                        </button>
-                      ))}
-                    </div>
+                <p className="room-howto">Clique sur un objet puis sur le plan, ou fais-le glisser directement dessus.</p>
+                <input className="input room-search" placeholder="Chercher un objet…" value={query} onChange={(e) => setQuery(e.target.value)} />
+                {!query && (
+                  <div className="room-cats">
+                    {CATEGORIES.map((c) => (
+                      <button key={c} className={`room-catbtn ${cat === c ? 'on' : ''}`} onClick={() => setCat(c)} title={c}>
+                        <span>{CATEGORY_EMOJI[c]}</span>
+                      </button>
+                    ))}
                   </div>
-                ))}
+                )}
+                <div className="eyebrow room-cat">{query ? 'Résultats' : cat}</div>
+                <div className="room-items" key={query ? 'q' : cat}>
+                  {CATALOG.filter((c) => (query ? norm(c.name + ' ' + c.category).includes(norm(query)) : c.category === cat)).map((c, i) => (
+                    <button
+                      key={c.id}
+                      draggable
+                      onDragStart={(e) => {
+                        e.dataTransfer.setData('text/minion-furniture', c.id)
+                        e.dataTransfer.effectAllowed = 'copy'
+                        setPlacing(c.id)
+                        setTool('furniture')
+                      }}
+                      style={{ ['--i' as string]: i }} className={`room-item ${placing === c.id && tool === 'furniture' ? 'on' : ''}`} onClick={() => { setPlacing(c.id); setTool('furniture') }} title={`${c.name} · ${c.w} × ${c.d} cm`}>
+                      <span className="room-item-emoji" style={{ background: `color-mix(in srgb, ${c.color} 35%, transparent)` }}>{c.emoji}</span>
+                      <span>{c.name}</span>
+                    </button>
+                  ))}
+                </div>
+                {query && !CATALOG.some((c) => norm(c.name + ' ' + c.category).includes(norm(query))) && <p className="faint" style={{ fontSize: '0.8rem', padding: 6 }}>Rien trouvé… essaie un autre mot.</p>}
               </div>
             )}
           </aside>
@@ -260,7 +304,7 @@ function RoomEditor({ initial }: { initial: RoomPlan }) {
           )}
           {show3d && (
             <div className="room-3d">
-              <View3D ref={three} data={data} ambience={plan.ambience} mode={view === 'free' ? 'free' : 'iso'} cutWalls={cut} />
+              <View3D key={quality} ref={three} quality={quality} data={data} ambience={plan.ambience} mode={view === 'free' ? 'free' : 'iso'} cutWalls={cut} />
               <div className="room-3d-bar">
                 {view !== 'free' && (
                   <>
@@ -274,7 +318,12 @@ function RoomEditor({ initial }: { initial: RoomPlan }) {
                 </label>
                 <div className="seg sm">
                   <button className={plan.ambience.time === 'jour' ? 'on' : ''} onClick={() => setPlan((p) => ({ ...p, ambience: { ...p.ambience, time: 'jour' } }))}>Jour</button>
+                  <button className={plan.ambience.time === 'doree' ? 'on' : ''} onClick={() => setPlan((p) => ({ ...p, ambience: { ...p.ambience, time: 'doree' } }))}>Doré</button>
                   <button className={plan.ambience.time === 'soir' ? 'on' : ''} onClick={() => setPlan((p) => ({ ...p, ambience: { ...p.ambience, time: 'soir' } }))}>Soir</button>
+                </div>
+                <div className="seg sm" title="Éco : plus fluide sur un petit ordinateur · Belle : ombres et reflets plus fins">
+                  <button className={quality === 'eco' ? 'on' : ''} onClick={() => setQuality('eco')}>Éco</button>
+                  <button className={quality === 'belle' ? 'on' : ''} onClick={() => setQuality('belle')}>Belle</button>
                 </div>
                 <label className="room-slider" title="Soleil">
                   ☀
@@ -285,6 +334,11 @@ function RoomEditor({ initial }: { initial: RoomPlan }) {
                   <input type="range" min={0} max={2} step={0.05} value={plan.ambience.warm} onChange={(e) => setPlan((p) => ({ ...p, ambience: { ...p.ambience, warm: +e.target.value } }))} />
                 </label>
               </div>
+              {!show2d && (
+                <button className="btn primary sm room-add3d" onClick={() => setView('split')}>
+                  <Icon name="plus" size={15} /> Ajouter des meubles
+                </button>
+              )}
               <div className="room-3d-note">{view === 'free' ? 'Glisser : tourner · clic droit : déplacer · molette : zoom' : 'Molette : zoom · glisser : déplacer'} · généré depuis le plan</div>
             </div>
           )}

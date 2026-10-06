@@ -257,3 +257,9 @@ html { -webkit-text-size-adjust: 100%; }
   .input, .textarea, .select, .tag-input input, .task-add input, .task-edit, .lib-search input, .search-input-row input,
   .note-select, .flash-q, .flash-a, .pp-hex, .se-field input, .se-field select, .prose { font-size: 16px !important; }
 }
+/* Boutons et pastilles : retour tactile léger */
+.btn.primary:hover { transform: translateY(-1px); }
+.seg button { transition: background 220ms var(--ease), color 220ms var(--ease), box-shadow 220ms var(--ease), transform 220ms var(--ease); }
+.seg button:active { transform: scale(0.96); }
+.chip { transition: background var(--t-fast), color var(--t-fast), transform 220ms cubic-bezier(0.34, 1.56, 0.64, 1); }
+button.chip:active { transform: scale(0.94); }
