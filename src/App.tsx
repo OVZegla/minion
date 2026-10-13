@@ -28,6 +28,7 @@ import { DeckPage } from './features/learn/DeckPage'
 import { PenHomePage, PenLevelPage } from './features/pen/PenGamePage'
 import { StudioHome } from './features/studio/StudioHome'
 import { StudioPage } from './features/studio/Studio'
+import { LetterPage } from './features/letter/LetterPage'
 
 // la 3D (three.js) n'est chargée qu'en ouvrant un plan
 const RoomsHome = lazy(() => import('./features/rooms/RoomsHome').then((m) => ({ default: m.RoomsHome })))
@@ -65,6 +66,7 @@ const router = createHashRouter([
       { path: 'plume/:levelId', element: <PenLevelPage /> },
       { path: 'apprendre/:id', element: <DeckPage /> },
       { path: 'reglages', element: <SettingsPage /> },
+      { path: 'lettre', element: <LetterPage /> },
       { path: '*', element: <ErrorPage /> },
     ],
   },

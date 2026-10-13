@@ -10,6 +10,7 @@ import { useReminders } from '../features/calendar/reminders'
 import { useInstall } from '../lib/install'
 import { deName } from '../lib/phrases'
 import { QuickCapture } from './QuickCapture'
+import { LETTER_KEY } from '../features/letter/LetterPage'
 import { SearchPalette } from './SearchPalette'
 import './layout.css'
 
@@ -31,7 +32,7 @@ const NAV = [
 ]
 
 /** Espaces de travail plein écran (sans le menu de Minion). */
-const IMMERSIVE = /^\/(plume\/[^/]+|studio\/[^/]+|pieces\/[^/]+)/
+const IMMERSIVE = /^\/(plume\/[^/]+|studio\/[^/]+|pieces\/[^/]+|lettre)/
 
 export function Layout() {
   const settings = useSettings()
@@ -42,6 +43,7 @@ export function Layout() {
   const [mobileNav, setMobileNav] = useState(false)
   const loc = useLocation()
   const navigate = useNavigate()
+  const letterOpened = useLiveQuery(async () => !!(await db.kv.get(LETTER_KEY)), [], true)
   const inboxCount = useLiveQuery(() => db.notes.filter((n) => n.inbox && !n.trashedAt).count(), []) ?? 0
 
   useEffect(() => setMobileNav(false), [loc.pathname])
@@ -154,6 +156,13 @@ export function Layout() {
           <span>Plus</span>
         </button>
       </nav>
+
+      {/* boîte aux lettres secrète : une petite enveloppe, seulement sur l'accueil */}
+      {loc.pathname === '/' && (
+        <NavLink to="/lettre" className={`secret-mail no-print ${letterOpened ? '' : 'unread'}`} title={letterOpened ? 'Ta boîte aux lettres' : 'Tu as du courrier…'} aria-label="Boîte aux lettres">
+          <Icon name="mail" size={22} />
+        </NavLink>
+      )}
 
       <QuickCapture open={capture} onClose={() => setCapture(false)} />
       <SearchPalette open={search} onClose={() => setSearch(false)} />
