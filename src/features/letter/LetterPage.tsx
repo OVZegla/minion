@@ -71,7 +71,7 @@ export function LetterPage() {
 
   return (
     <div className={`lt stage-${stage}`}>
-      <button className="lt-back" onClick={() => navigate('/')} aria-label="Revenir à Minion">
+      <button className="lt-back" onClick={() => navigate('/messages')} aria-label="Revenir aux messages">
         ←
       </button>
       <Petals />

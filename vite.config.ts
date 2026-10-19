@@ -30,6 +30,18 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
         maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
         navigateFallback: 'index.html',
+        // banques de sons du studio musique : gardées en cache (hors ligne, et plus de téléchargement)
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/(gleitz|danigb|tonejs|nbrosowsky)\.github\.io\/.*/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'minion-sons',
+              expiration: { maxEntries: 4000, maxAgeSeconds: 60 * 60 * 24 * 365 },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+        ],
       },
     }),
   ],
