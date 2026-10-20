@@ -6,12 +6,17 @@ export interface TourStep {
   title: string
   text: ReactNode
   before?: () => void
+  /** Leçon : ce qu'il faut faire, et comment savoir que c'est fait. */
+  task?: ReactNode
+  done?: () => boolean
+  doIt?: () => void
+  chapter?: string
 }
 
 type Box = { x: number; y: number; w: number; h: number }
 
 /** Visite guidée : Minion met en lumière une zone de l'écran et l'explique. */
-export function Tour({ steps, onClose }: { steps: TourStep[]; onClose: () => void }) {
+export function Tour({ steps, onClose, skipLabel = 'Passer la visite', finishLabel = 'À moi de jouer !' }: { steps: TourStep[]; onClose: () => void; skipLabel?: string; finishLabel?: string }) {
   const [i, setI] = useState(0)
   const [box, setBox] = useState<Box | null>(null)
   const [size, setSize] = useState({ w: window.innerWidth, h: window.innerHeight })
@@ -19,8 +24,10 @@ export function Tour({ steps, onClose }: { steps: TourStep[]; onClose: () => voi
   const [bh, setBh] = useState(220)
   const step = steps[i]
   const last = i === steps.length - 1
+  const [ok, setOk] = useState(false)
 
   useEffect(() => {
+    setOk(false)
     step.before?.()
   }, [i]) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -41,6 +48,7 @@ export function Tour({ steps, onClose }: { steps: TourStep[]; onClose: () => voi
         prev = key
         setBox(key ? { x, y, w, h } : null)
       }
+      if (step.done) setOk(step.done())
       if (window.innerWidth !== size.w || window.innerHeight !== size.h) setSize({ w: window.innerWidth, h: window.innerHeight })
       raf = requestAnimationFrame(tick)
     }
@@ -89,32 +97,56 @@ export function Tour({ steps, onClose }: { steps: TourStep[]; onClose: () => voi
           <Mascot size={52} className="tour-mascot" />
           <div>
             <div className="tour-count">
+              {step.chapter ? `${step.chapter} · ` : ''}
               {i + 1} / {steps.length}
             </div>
             <b className="tour-title">{step.title}</b>
           </div>
         </div>
         <div className="tour-text">{step.text}</div>
-        <div className="tour-dots" aria-hidden>
-          {steps.map((_, k) => (
-            <i key={k} className={k === i ? 'on' : k < i ? 'done' : ''} />
-          ))}
-        </div>
+        {step.task && (
+          <div className={`tour-task ${ok ? 'ok' : ''}`}>
+            <span className="tour-check">{ok ? '✓' : '→'}</span>
+            <div>{ok ? <b>Bravo, c’est fait !</b> : step.task}</div>
+          </div>
+        )}
+        {steps.length > 14 ? (
+          <div className="tour-progress" aria-hidden>
+            <i style={{ width: `${((i + 1) / steps.length) * 100}%` }} />
+          </div>
+        ) : (
+          <div className="tour-dots" aria-hidden>
+            {steps.map((_, k) => (
+              <i key={k} className={k === i ? 'on' : k < i ? 'done' : ''} />
+            ))}
+          </div>
+        )}
         <div className="tour-actions">
           {!last && (
             <button className="tour-skip" onClick={onClose}>
-              Passer la visite
+              {skipLabel}
             </button>
           )}
           <span className="dw-spacer" />
           {i > 0 && (
             <button className="dw-btn" onClick={() => setI(i - 1)}>
-              ← Retour
+              ←
             </button>
           )}
-          <button className="dw-btn accent" onClick={() => (last ? onClose() : setI(i + 1))}>
-            {last ? 'À moi de jouer !' : 'Suivant →'}
-          </button>
+          {step.task && !ok && step.doIt && (
+            <button className="dw-btn" onClick={() => step.doIt!()} title="Minion le fait à ta place">
+              Fais-le pour moi
+            </button>
+          )}
+          {step.task && !ok ? (
+            <button className="dw-btn" onClick={() => setI(i + 1)} title="Passer cette étape">
+              Passer
+            </button>
+          ) : (
+            <button className={`dw-btn accent ${step.task ? 'pulse' : ''}`} onClick={() => (last ? onClose() : setI(i + 1))}>
+              {last ? finishLabel : 'Suivant →'}
+            </button>
+          )}
         </div>
       </div>
     </div>

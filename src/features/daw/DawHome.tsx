@@ -36,6 +36,15 @@ export function DawHome() {
     navigate(`/musique/${p.id}?visite=1`)
   }
 
+  /** Leçon : un morceau vide, et Minion guide chaque geste. */
+  const startLesson = async () => {
+    const p = TEMPLATES.find((t) => t.id === 'empty')!.build()
+    p.title = 'Ma première musique'
+    p.tracks = []
+    await db.daw.add(p)
+    navigate(`/musique/${p.id}?lecon=1`)
+  }
+
   const remove = async (p: DawProject) => {
     if (!(await confirm({ title: 'Supprimer ce morceau ?', message: 'Il sera effacé définitivement, avec ses prises de voix.', confirmLabel: 'Supprimer définitivement', danger: true }))) return
     const ids = new Set(p.tracks.flatMap((t) => t.clips.map((c) => c.audioId).filter(Boolean) as string[]))
@@ -54,6 +63,9 @@ export function DawHome() {
           <p className="sub">Enregistrer sa voix, composer sur plusieurs pistes avec des centaines d’instruments, mixer, exporter.</p>
         </div>
         <span className="spacer" />
+        <button className="btn" onClick={startLesson} title="Minion t’apprend, geste par geste, à créer une musique de zéro">
+          🎓 Apprendre à créer une musique
+        </button>
         <button className="btn" onClick={startTour} title="Minion te fait visiter le studio">
           <Icon name="sparkle" size={16} /> Visite guidée
         </button>
@@ -107,13 +119,13 @@ export function DawHome() {
             <div>
               <h2>Bienvenue dans ton studio 🎶</h2>
               <p>Ici, tu peux enregistrer ta voix, composer avec plus de 300 instruments, ajouter des effets et mixer, comme dans un vrai studio.</p>
-              <p>Tes morceaux seront rangés sur cette page. On en crée un premier ensemble ? Je te montre tout, pas à pas.</p>
+              <p>Tes morceaux seront rangés sur cette page. On crée ta première musique ensemble, de zéro ? Je te guide geste par geste, et je vérifie avec toi à chaque étape.</p>
               <div className="row">
-                <button className="btn primary" onClick={startTour}>
-                  Oui, allons-y !
+                <button className="btn primary" onClick={startLesson}>
+                  🎓 Apprendre pas à pas
                 </button>
-                <button className="btn" onClick={() => setParams({}, { replace: true })}>
-                  Je regarde d’abord
+                <button className="btn" onClick={startTour}>
+                  Juste une petite visite
                 </button>
               </div>
             </div>

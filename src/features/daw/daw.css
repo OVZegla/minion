@@ -66,7 +66,7 @@
 .dw-btn:hover { background: var(--raise); }
 .dw-btn.accent { background: var(--accent); border-color: var(--accent); color: var(--accent-ink) !important; font-weight: 600; }
 .dw-btn.sm { height: 22px; padding: 0 7px; }
-.dw-select, .dw-input, .dw-field input[type='number'] { background: var(--bg); border: 1px solid var(--line); color: var(--text); border-radius: 6px; height: 28px; padding: 0 6px; font: inherit; }
+.dw-select, .dw-input, .dw-field input[type='number'], .dw-field input[type='text'] { background: var(--bg); border: 1px solid var(--line); color: var(--text); border-radius: 6px; height: 28px; padding: 0 6px; font: inherit; }
 .dw-input { padding: 0 9px; }
 .dw-field { display: inline-flex; align-items: center; gap: 6px; color: var(--faint); white-space: nowrap; }
 .dw-field b { color: var(--text); min-width: 22px; text-align: center; }
@@ -407,3 +407,15 @@
 .dwh-welcome-mascot { flex: none; animation: dwh-wave 1.2s ease-in-out 2; transform-origin: 50% 100%; }
 @keyframes dwh-wave { 25% { transform: rotate(-8deg); } 75% { transform: rotate(8deg); } }
 @media (max-width: 520px) { .dwh-welcome-card { flex-direction: column; align-items: center; text-align: center; } }
+
+/* leçon : tâche à faire */
+.tour-task { display: flex; gap: 10px; align-items: flex-start; margin: 8px 0 4px; padding: 9px 12px; border-radius: 12px; background: #fdf1e3; border: 1px dashed #f0a35e; font-size: 13px; }
+.tour-task.ok { background: #e8f4ea; border: 1px solid #8fc59b; animation: tour-ok 0.5s cubic-bezier(.3,1.5,.5,1); }
+.tour-task.ok b { color: #3f8a52; }
+@keyframes tour-ok { from { transform: scale(0.95); } }
+.tour-check { flex: none; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: #f0a35e; color: #fff; font-weight: 700; font-size: 12px; }
+.tour-task.ok .tour-check { background: #57a86b; }
+.tour-progress { height: 5px; border-radius: 3px; background: #efe6d8; margin: 10px 0; overflow: hidden; }
+.tour-progress i { display: block; height: 100%; background: #f0a35e; border-radius: 3px; transition: width 0.4s ease; }
+.tour-bubble .dw-btn.pulse { animation: tour-pulse 1.4s ease-in-out infinite; }
+@keyframes tour-pulse { 50% { box-shadow: 0 0 0 5px rgba(240, 163, 94, 0.3); } }

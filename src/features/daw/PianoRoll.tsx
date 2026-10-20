@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { noteName } from '../synth/music'
-import { getKit, kitPads, PADS } from './bank'
+import { getInstrument, getKit, kitPads, PADS } from './bank'
 import { usePlayhead } from './controls'
 import type { Engine } from './engine'
 import type { Clip, MidiNote, Track } from './types'
@@ -69,7 +69,8 @@ export function PianoRoll({ clip, track, bpm, bpb, snap, engine, onChange }: Pro
     // centrer verticalement sur les notes
     if (!drums && scroller.current) {
       const ps = notes.map((n) => n.p)
-      const mid = ps.length ? (Math.min(...ps) + Math.max(...ps)) / 2 : 62
+      const low = /Basse/.test(getInstrument(track.instrument)?.cat ?? '')
+      const mid = ps.length ? (Math.min(...ps) + Math.max(...ps)) / 2 : low ? 41 : 62
       scroller.current.scrollTop = (HIGH - mid) * ROW - scroller.current.clientHeight / 2
     }
   }, [clip.id]) // eslint-disable-line react-hooks/exhaustive-deps

@@ -15,6 +15,7 @@ import { AudioClipPanel, FxRack, Mixer } from './Panels'
 import { LOOPS, loopClip, newTrack } from './patterns'
 import { PianoRoll } from './PianoRoll'
 import { Tour, type TourStep } from './Tour'
+import { lessonSteps, type LessonApi } from './lesson'
 import { decodeBlob } from './samples'
 import { beatsPerBar, clipEnd, projectEnd, type Clip, type DawProject, type Track, type TrackKind } from './types'
 import { bufferToWav, download } from './wav'
@@ -99,6 +100,8 @@ function DawEditor({ initial }: { initial: DawProject }) {
   const clipboard = useRef<{ clips: Clip[]; kind: TrackKind } | null>(null)
   const [params, setParams] = useSearchParams()
   const [tour, setTour] = useState(() => params.has('visite'))
+  const [lesson, setLesson] = useState(() => params.has('lecon'))
+  const playsRef = useRef(0)
 
   const bpb = beatsPerBar(proj.timeSig)
   const snap = snapSel === 'bar' ? bpb : +snapSel
@@ -166,6 +169,7 @@ function DawEditor({ initial }: { initial: DawProject }) {
   useEffect(() => {
     if (!engine) return
     const off = engine.subscribe(() => {
+      if (engine.state !== 'stopped') playsRef.current++
       setTstate(engine.state)
       setLoading(engine.loading)
     })
@@ -740,6 +744,28 @@ function DawEditor({ initial }: { initial: DawProject }) {
     },
   ]
 
+  /* ---------------- Leçon pas à pas ---------------- */
+
+  const lessonApi = useRef<LessonApi>(null!)
+  lessonApi.current = {
+    p: () => projRef.current,
+    update,
+    addTrack,
+    addLoop,
+    openEditor,
+    setPanel,
+    setBrowser,
+    setBrowserFor,
+    setSelTrack,
+    setFxTarget,
+    plays: () => playsRef.current,
+  }
+  const lessonList = useMemo(() => lessonSteps(new Proxy({} as LessonApi, { get: (_, k) => lessonApi.current[k as keyof LessonApi] })), [])
+  const closeLesson = () => {
+    setLesson(false)
+    if (params.has('lecon')) setParams({}, { replace: true })
+  }
+
   /* ---------------- Rendu ---------------- */
 
   if (!engine) return <div className="dw dw-empty-page">Ouverture du studio…</div>
@@ -795,7 +821,7 @@ function DawEditor({ initial }: { initial: DawProject }) {
             <button className={`dw-tbtn rec ${tstate === 'recording' ? 'on' : ''}`} onClick={record} title="Enregistrer (R)">
               ●
             </button>
-            <button className={`dw-tbtn ${proj.loop.on ? 'lit' : ''}`} onClick={() => setP({ loop: { ...proj.loop, on: !proj.loop.on } })} title="Boucle (L)">
+            <button className={`dw-tbtn dw-loop-btn ${proj.loop.on ? 'lit' : ''}`} onClick={() => setP({ loop: { ...proj.loop, on: !proj.loop.on } })} title="Boucle (L)">
               🔁
             </button>
             <div className="dw-time" ref={timeRef} />
@@ -807,7 +833,7 @@ function DawEditor({ initial }: { initial: DawProject }) {
 
           <div className="dw-group dw-tempo">
             <label className="dw-field tempo" title="Tempo">
-              <input type="number" min={30} max={260} value={proj.bpm} onChange={(e) => setP({ bpm: Math.max(30, Math.min(260, +e.target.value || 100)) }, 'bpm')} onKeyDown={(e) => e.stopPropagation()} />
+              <BpmInput value={proj.bpm} onChange={(bpm) => setP({ bpm }, 'bpm')} />
               BPM
             </label>
             <select className="dw-select" value={proj.timeSig.join('/')} onChange={(e) => setP({ timeSig: e.target.value.split('/').map(Number) as [number, number] })} title="Mesure">
@@ -848,7 +874,10 @@ function DawEditor({ initial }: { initial: DawProject }) {
           <button className={`dw-btn ${browser ? 'accent' : ''}`} onClick={() => setBrowser((b) => !b)} title="Banque de sons et de boucles (B)">
             🎼 Sons
           </button>
-          <button className="dw-icon" onClick={() => setTour(true)} title="Visite guidée avec Minion">
+          <button className="dw-btn" onClick={() => (setTour(false), setLesson(true))} title="Leçon pas à pas : créer une musique de zéro">
+            🎓 Leçon
+          </button>
+          <button className="dw-icon" onClick={() => (setLesson(false), setTour(true))} title="Visite guidée avec Minion">
             ?
           </button>
           <button className="dw-btn dw-export-btn" onClick={() => setExporting(true)}>
@@ -905,7 +934,7 @@ function DawEditor({ initial }: { initial: DawProject }) {
             <Browser
               target={proj.tracks.find((t) => t.id === (browserFor ?? selTrack)) ?? null}
               onPickSound={(s) => assignSound(s)}
-              onPickLoop={(l) => addLoop(l, selTrack)}
+              onPickLoop={(l) => addLoop(l, null)}
               onPreview={(s) => engine.preview(s)}
               onPreviewLoop={previewLoop}
               onClose={() => {
@@ -984,6 +1013,7 @@ function DawEditor({ initial }: { initial: DawProject }) {
         </div>
 
         {tour && <Tour steps={tourSteps} onClose={closeTour} />}
+        {lesson && <Tour steps={lessonList} onClose={closeLesson} skipLabel="Quitter la leçon" finishLabel="Terminer la leçon" />}
         {(busy || loading) && <div className="dw-busy">{busy ?? 'Chargement des sons…'}</div>}
 
         <Modal open={exporting} onClose={() => setExporting(false)} title="Exporter le morceau" width={480}>
@@ -1004,6 +1034,50 @@ function DawEditor({ initial }: { initial: DawProject }) {
         </Modal>
       </div>
     </PlayheadCtx.Provider>
+  )
+}
+
+/** Tempo : on tape librement, la valeur n'est appliquée (et bornée 30–260) qu'une fois le nombre complet. */
+function BpmInput({ value, onChange }: { value: number; onChange: (bpm: number) => void }) {
+  const [draft, setDraft] = useState(String(value))
+  const [editing, setEditing] = useState(false)
+  useEffect(() => {
+    if (!editing) setDraft(String(value))
+  }, [value, editing])
+  const commit = () => {
+    const v = Math.round(+draft)
+    if (draft.trim() && Number.isFinite(v)) onChange(Math.max(30, Math.min(260, v)))
+    setEditing(false)
+  }
+  return (
+    <input
+      type="text"
+      inputMode="numeric"
+      value={editing ? draft : String(value)}
+      onFocus={(e) => {
+        setEditing(true)
+        setDraft(String(value))
+        e.target.select()
+      }}
+      onChange={(e) => {
+        const d = e.target.value.replace(/[^0-9]/g, '').slice(0, 3)
+        setDraft(d)
+        // appliqué dès que le nombre est plausible, sans jamais forcer pendant la saisie
+        const v = +d
+        if (v >= 30 && v <= 260) onChange(v)
+      }}
+      onBlur={commit}
+      onKeyDown={(e) => {
+        e.stopPropagation()
+        if (e.key === 'Enter') (e.target as HTMLInputElement).blur()
+        if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+          e.preventDefault()
+          const v = Math.max(30, Math.min(260, (+draft || value) + (e.key === 'ArrowUp' ? 1 : -1)))
+          setDraft(String(v))
+          onChange(v)
+        }
+      }}
+    />
   )
 }
 
